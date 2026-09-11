@@ -407,7 +407,9 @@ def dinheiro(valor):
 
 def saudacao():
 
-    hora = datetime.now().hour
+    agora = datetime.now()
+
+    hora = agora.hour
 
     if hora < 12:
         return "Bom dia"
