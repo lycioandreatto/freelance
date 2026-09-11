@@ -1784,6 +1784,7 @@ elif pagina == "Financeiro":
             height=280
         )
 
+```python
 # ============================================================
 # FIDELIZAÇÃO
 # ============================================================
@@ -1800,7 +1801,34 @@ elif pagina == "Fidelização":
         unsafe_allow_html=True
     )
 
-    agenda = st.session_state.agenda
+    agenda = st.session_state.agenda.copy()
+
+    # --------------------------------------------------------
+    # GARANTIA DAS COLUNAS DA AGENDA
+    # --------------------------------------------------------
+
+    colunas_agenda = [
+        "Data",
+        "Horário",
+        "Cliente",
+        "Serviço",
+        "Valor",
+        "Status"
+    ]
+
+    for coluna in colunas_agenda:
+
+        if coluna not in agenda.columns:
+
+            if coluna == "Valor":
+                agenda[coluna] = 0.0
+
+            else:
+                agenda[coluna] = ""
+
+    # --------------------------------------------------------
+    # ATENDIMENTOS CONCLUÍDOS
+    # --------------------------------------------------------
 
     concluidos = agenda[
         agenda["Status"] == "Concluído"
@@ -1809,10 +1837,23 @@ elif pagina == "Fidelização":
     if concluidos.empty:
 
         st.info(
-            "Ainda não existem dados suficientes."
+            "Ainda não existem dados suficientes para gerar os indicadores de fidelização."
         )
 
     else:
+
+        # ----------------------------------------------------
+        # GARANTE QUE VALOR SEJA NUMÉRICO
+        # ----------------------------------------------------
+
+        concluidos["Valor"] = pd.to_numeric(
+            concluidos["Valor"],
+            errors="coerce"
+        ).fillna(0)
+
+        # ----------------------------------------------------
+        # VISITAS POR CLIENTE
+        # ----------------------------------------------------
 
         visitas = obter_visitas_cliente(
             concluidos
@@ -1821,10 +1862,14 @@ elif pagina == "Fidelização":
         if visitas.empty:
 
             st.info(
-                "Ainda não existem dados suficientes."
+                "Ainda não existem dados suficientes para gerar os indicadores."
             )
 
         else:
+
+            # ------------------------------------------------
+            # CLIENTE MAIS FREQUENTE
+            # ------------------------------------------------
 
             cliente_mais_frequente = (
                 visitas["Visitas"]
@@ -1834,6 +1879,10 @@ elif pagina == "Fidelização":
                 .index[0]
             )
 
+            # ------------------------------------------------
+            # CLIENTE COM MAIOR GASTO
+            # ------------------------------------------------
+
             cliente_maior_gasto = (
                 visitas["Gasto"]
                 .sort_values(
@@ -1841,6 +1890,10 @@ elif pagina == "Fidelização":
                 )
                 .index[0]
             )
+
+            # ------------------------------------------------
+            # INDICADORES PRINCIPAIS
+            # ------------------------------------------------
 
             c1, c2, c3 = st.columns(3)
 
@@ -1863,6 +1916,10 @@ elif pagina == "Fidelização":
                 )
             )
 
+            # ------------------------------------------------
+            # CLIENTES MAIS FIÉIS
+            # ------------------------------------------------
+
             st.markdown(
                 '<div class="section-title">Clientes mais fiéis</div>',
                 unsafe_allow_html=True
@@ -1877,16 +1934,19 @@ elif pagina == "Fidelização":
                 .copy()
             )
 
-            ranking_visitas[
-                "Gasto"
-            ] = ranking_visitas[
-                "Gasto"
-            ].apply(dinheiro)
+            ranking_visitas["Gasto"] = (
+                ranking_visitas["Gasto"]
+                .apply(dinheiro)
+            )
 
             st.dataframe(
                 ranking_visitas,
                 use_container_width=True
             )
+
+            # ------------------------------------------------
+            # FREQUÊNCIA DAS CLIENTES
+            # ------------------------------------------------
 
             st.markdown(
                 '<div class="section-title">Frequência das clientes</div>',
@@ -1922,7 +1982,7 @@ elif pagina == "Fidelização":
             )
 
             # ------------------------------------------------
-            # SERVIÇO FAVORITO DAS CLIENTES
+            # SERVIÇOS POR CLIENTE
             # ------------------------------------------------
 
             st.markdown(
@@ -1942,41 +2002,46 @@ elif pagina == "Fidelização":
                 .reset_index()
             )
 
-            cliente_selecionado = st.selectbox(
-                "Selecione uma cliente",
-                sorted(
-                    concluidos[
-                        "Cliente"
-                    ].unique()
-                )
-            )
-
-            dados_cliente = (
-                servicos_clientes[
-                    servicos_clientes["Cliente"]
-                    == cliente_selecionado
+            clientes_disponiveis = sorted(
+                concluidos[
+                    "Cliente"
                 ]
-                .sort_values(
-                    "Gasto",
-                    ascending=False
+                .dropna()
+                .unique()
+            )
+
+            if clientes_disponiveis:
+
+                cliente_selecionado = st.selectbox(
+                    "Selecione uma cliente",
+                    clientes_disponiveis
                 )
-                .copy()
-            )
 
-            dados_cliente[
-                "Gasto"
-            ] = dados_cliente[
-                "Gasto"
-            ].apply(dinheiro)
+                dados_cliente = (
+                    servicos_clientes[
+                        servicos_clientes["Cliente"]
+                        == cliente_selecionado
+                    ]
+                    .sort_values(
+                        "Gasto",
+                        ascending=False
+                    )
+                    .copy()
+                )
 
-            st.dataframe(
-                dados_cliente,
-                use_container_width=True,
-                hide_index=True
-            )
+                dados_cliente["Gasto"] = (
+                    dados_cliente["Gasto"]
+                    .apply(dinheiro)
+                )
+
+                st.dataframe(
+                    dados_cliente,
+                    use_container_width=True,
+                    hide_index=True
+                )
 
             # ------------------------------------------------
-            # OPORTUNIDADES
+            # OPORTUNIDADES DE RELACIONAMENTO
             # ------------------------------------------------
 
             st.markdown(
@@ -1989,67 +2054,99 @@ elif pagina == "Fidelização":
                 .copy()
             )
 
-            # Garantia absoluta de que a coluna existe
-            if "Última Visita" not in clientes_inativos.columns:
+            # ------------------------------------------------
+            # GARANTE AS COLUNAS DOS CLIENTES
+            # ------------------------------------------------
 
-                clientes_inativos[
-                    "Última Visita"
-                ] = ""
+            colunas_clientes = [
+                "Cliente",
+                "Telefone",
+                "Última Visita",
+                "Visitas",
+                "Total Gasto"
+            ]
 
-            clientes_inativos[
-                "Última"
-            ] = pd.to_datetime(
-                clientes_inativos[
-                    "Última Visita"
-                ],
+            for coluna in colunas_clientes:
+
+                if coluna not in clientes_inativos.columns:
+
+                    if coluna in [
+                        "Visitas",
+                        "Total Gasto"
+                    ]:
+                        clientes_inativos[coluna] = 0
+
+                    else:
+                        clientes_inativos[coluna] = ""
+
+            # ------------------------------------------------
+            # CONVERSÃO DA DATA DA ÚLTIMA VISITA
+            # ------------------------------------------------
+
+            clientes_inativos["Última"] = pd.to_datetime(
+                clientes_inativos["Última Visita"],
                 dayfirst=True,
                 errors="coerce"
             )
 
-            # Usa uma data de referência coerente
-            # com os dados fictícios.
+            # ------------------------------------------------
+            # DATA DE REFERÊNCIA DO DEMO
+            # ------------------------------------------------
+
             referencia = date(
                 2026,
                 9,
                 11
             )
 
-            clientes_inativos[
-                "Dias sem visitar"
-            ] = (
+            clientes_inativos["Dias sem visitar"] = (
                 pd.Timestamp(
                     referencia
                 )
                 -
-                clientes_inativos[
-                    "Última"
-                ]
+                clientes_inativos["Última"]
             ).dt.days
 
+            # ------------------------------------------------
+            # CLIENTES QUE ESTÃO HÁ 7+ DIAS SEM VISITAR
+            # ------------------------------------------------
+
             inativos = clientes_inativos[
-                clientes_inativos[
-                    "Dias sem visitar"
-                ] >= 7
+                clientes_inativos["Dias sem visitar"] >= 7
             ].copy()
 
+            # ------------------------------------------------
+            # OPORTUNIDADE DE RETORNO
+            # ------------------------------------------------
+
             if not inativos.empty:
+
+                quantidade_inativos = len(
+                    inativos
+                )
 
                 st.markdown(
                     f"""
                     <div class="insight">
 
-                        <strong>
-                            {len(inativos)} clientes
-                        </strong>
-                        estão há pelo menos 7 dias
-                        sem visitar o studio.
+                        <div style="
+                            font-size: 16px;
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                        ">
+                            Oportunidade de relacionamento
+                        </div>
 
-                        <br><br>
+                        <div>
+                            <strong>{quantidade_inativos} clientes</strong>
+                            estão há pelo menos 7 dias sem visitar o studio.
+                        </div>
 
-                        Esse grupo pode receber uma
-                        mensagem de retorno pelo WhatsApp,
-                        uma condição especial ou uma sugestão
-                        de novo serviço.
+                        <div style="margin-top: 12px;">
+                            Esse grupo pode receber uma mensagem de retorno
+                            pelo WhatsApp, uma condição especial ou uma
+                            sugestão de novo serviço.
+                        </div>
 
                     </div>
                     """,
@@ -2061,50 +2158,89 @@ elif pagina == "Fidelização":
                 st.markdown(
                     """
                     <div class="insight">
-                        A maioria das clientes está mantendo
-                        uma boa frequência de visitas.
+
+                        <div style="
+                            font-size: 16px;
+                            font-weight: 600;
+                            margin-bottom: 8px;
+                        ">
+                            Boa frequência
+                        </div>
+
+                        <div>
+                            A maioria das clientes está mantendo
+                            uma boa frequência de visitas.
+                        </div>
+
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
 
+            # ------------------------------------------------
+            # ESTRATÉGIA DE FIDELIZAÇÃO
+            # ------------------------------------------------
+
             st.markdown(
                 """
                 <div class="insight">
 
-                    <strong>
-                        Estratégia de fidelização:
-                    </strong>
+                    <div style="
+                        font-size: 16px;
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                    ">
+                        Estratégia de fidelização
+                    </div>
 
-                    clientes que já realizaram vários
-                    serviços podem receber combinações
-                    personalizadas, como:
+                    <div>
+                        Clientes que já realizaram vários serviços
+                        podem receber combinações personalizadas,
+                        como:
+                    </div>
 
-                    unhas + sobrancelha
+                    <div style="margin-top: 10px;">
+                        <strong>Unhas + sobrancelha</strong>
+                    </div>
 
-                    ou
+                    <div style="margin-top: 5px;">
+                        ou
+                    </div>
 
-                    cílios + sobrancelha.
+                    <div style="margin-top: 5px;">
+                        <strong>Cílios + sobrancelha</strong>
+                    </div>
 
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
+            # ------------------------------------------------
+            # OPORTUNIDADE DE AUMENTO DE TICKET
+            # ------------------------------------------------
+
             st.markdown(
                 """
                 <div class="insight">
 
-                    <strong>
-                        Oportunidade de aumento de ticket:
-                    </strong>
+                    <div style="
+                        font-size: 16px;
+                        font-weight: 600;
+                        margin-bottom: 8px;
+                    ">
+                        Oportunidade de aumento de ticket
+                    </div>
 
-                    identificar clientes que fazem apenas
-                    um serviço e apresentar serviços
-                    complementares pode aumentar o valor
-                    médio de cada visita.
+                    <div>
+                        Identificar clientes que fazem apenas um
+                        serviço e apresentar serviços complementares
+                        pode aumentar o valor médio de cada visita.
+                    </div>
 
                 </div>
                 """,
                 unsafe_allow_html=True
             )
+```
+
