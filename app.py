@@ -236,6 +236,64 @@ clientes_iniciais = pd.DataFrame(
 
 
 # ============================================================
+# GASTOS INICIAIS
+# ============================================================
+
+gastos_iniciais = pd.DataFrame(
+    [
+        [
+            date(2026, 9, 1),
+            "Compra de materiais",
+            "Materiais",
+            "Gasto",
+            280.00,
+            "Produtos para atendimento"
+        ],
+        [
+            date(2026, 9, 3),
+            "Produtos para cílios",
+            "Materiais",
+            "Gasto",
+            190.00,
+            "Reposição de estoque"
+        ],
+        [
+            date(2026, 9, 5),
+            "Marketing",
+            "Marketing",
+            "Investimento",
+            120.00,
+            "Divulgação nas redes sociais"
+        ],
+        [
+            date(2026, 9, 7),
+            "Energia elétrica",
+            "Despesas fixas",
+            "Gasto",
+            180.00,
+            "Conta de energia"
+        ],
+        [
+            date(2026, 9, 9),
+            "Novo equipamento",
+            "Equipamentos",
+            "Investimento",
+            350.00,
+            "Equipamento para o studio"
+        ]
+    ],
+    columns=[
+        "Data",
+        "Descrição",
+        "Categoria",
+        "Tipo",
+        "Valor",
+        "Observação"
+    ]
+)
+
+
+# ============================================================
 # AGENDAMENTOS FICTÍCIOS
 # ============================================================
 
@@ -510,6 +568,37 @@ def garantir_colunas_agenda(df):
     return df[colunas]
 
 
+def garantir_colunas_gastos(df):
+
+    df = df.copy()
+
+    colunas = [
+        "Data",
+        "Descrição",
+        "Categoria",
+        "Tipo",
+        "Valor",
+        "Observação"
+    ]
+
+    for coluna in colunas:
+
+        if coluna not in df.columns:
+
+            if coluna == "Valor":
+                df[coluna] = 0.0
+
+            else:
+                df[coluna] = ""
+
+    df["Valor"] = pd.to_numeric(
+        df["Valor"],
+        errors="coerce"
+    ).fillna(0)
+
+    return df[colunas]
+
+
 def obter_visitas_cliente(df):
 
     if df.empty:
@@ -693,6 +782,40 @@ else:
         )
 
 
+if "gastos" not in st.session_state:
+
+    st.session_state.gastos = (
+        gastos_iniciais.copy()
+    )
+
+else:
+
+    gastos_atual = (
+        st.session_state.gastos
+    )
+
+    if not isinstance(
+        gastos_atual,
+        pd.DataFrame
+    ):
+
+        st.session_state.gastos = (
+            gastos_iniciais.copy()
+        )
+
+    else:
+
+        gastos_atual = (
+            garantir_colunas_gastos(
+                gastos_atual
+            )
+        )
+
+        st.session_state.gastos = (
+            gastos_atual
+        )
+
+
 # ============================================================
 # SIDEBAR
 # ============================================================
@@ -718,6 +841,7 @@ with st.sidebar:
             "Clientes",
             "Serviços",
             "Financeiro",
+            "Gastos",
             "Fidelização"
         ],
         label_visibility="collapsed"
@@ -1677,11 +1801,15 @@ elif pagina == "Financeiro":
 
     titulo_pagina(
         "Financeiro",
-        "Acompanhe o faturamento e o desempenho financeiro do studio."
+        "Acompanhe o faturamento, os gastos e o lucro do studio."
     )
 
     agenda = garantir_colunas_agenda(
         st.session_state.agenda
+    )
+
+    gastos = garantir_colunas_gastos(
+        st.session_state.gastos
     )
 
     concluidos = (
@@ -1692,58 +1820,102 @@ elif pagina == "Financeiro":
         .copy()
     )
 
-    if concluidos.empty:
+    faturamento = (
+        concluidos["Valor"].sum()
+    )
 
-        st.info(
-            "Ainda não existem atendimentos concluídos."
-        )
+    total_gastos = (
+        gastos["Valor"].sum()
+    )
 
-    else:
+    lucro = (
+        faturamento
+        -
+        total_gastos
+    )
 
-        faturamento = (
-            concluidos["Valor"].sum()
-        )
+    margem_lucro = (
+        (lucro / faturamento) * 100
+        if faturamento > 0
+        else 0
+    )
 
-        quantidade = len(
-            concluidos
-        )
+    quantidade = len(
+        concluidos
+    )
 
-        ticket = (
-            faturamento / quantidade
-        )
+    ticket = (
+        faturamento / quantidade
+        if quantidade > 0
+        else 0
+    )
 
-        maior_dia = (
-            concluidos
-            .groupby("Data")["Valor"]
-            .sum()
-            .sort_values(
-                ascending=False
-            )
-        )
+    c1, c2, c3, c4 = st.columns(4)
 
-        c1, c2, c3, c4 = st.columns(4)
+    c1.metric(
+        "Faturamento",
+        dinheiro(faturamento)
+    )
 
-        c1.metric(
-            "Faturamento",
-            dinheiro(faturamento)
-        )
+    c2.metric(
+        "Gastos",
+        dinheiro(total_gastos)
+    )
 
-        c2.metric(
+    c3.metric(
+        "Lucro líquido",
+        dinheiro(lucro)
+    )
+
+    c4.metric(
+        "Margem de lucro",
+        f"{margem_lucro:.1f}%"
+    )
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+
+        st.metric(
             "Atendimentos",
             quantidade
         )
 
-        c3.metric(
+    with c2:
+
+        st.metric(
             "Ticket médio",
             dinheiro(ticket)
         )
 
-        c4.metric(
-            "Melhor dia",
-            dinheiro(
-                maior_dia.iloc[0]
+    if faturamento > 0:
+
+        if lucro > 0:
+
+            st.success(
+                f"O studio faturou "
+                f"{dinheiro(faturamento)}, teve "
+                f"{dinheiro(total_gastos)} em saídas "
+                f"e apresentou lucro de "
+                f"{dinheiro(lucro)}."
             )
-        )
+
+        elif lucro < 0:
+
+            st.error(
+                f"As despesas estão maiores que o "
+                f"faturamento. O resultado atual é "
+                f"de {dinheiro(lucro)}."
+            )
+
+        else:
+
+            st.warning(
+                "O faturamento foi exatamente igual "
+                "aos gastos registrados."
+            )
+
+    if not concluidos.empty:
 
         secao(
             "Faturamento por serviço"
@@ -1854,6 +2026,270 @@ elif pagina == "Financeiro":
         st.bar_chart(
             categorias_financeiro,
             height=280
+        )
+
+    secao(
+        "Resumo financeiro"
+    )
+
+    resumo_financeiro = pd.DataFrame(
+        [
+            [
+                "Faturamento",
+                faturamento
+            ],
+            [
+                "Gastos",
+                total_gastos
+            ],
+            [
+                "Lucro líquido",
+                lucro
+            ]
+        ],
+        columns=[
+            "Indicador",
+            "Valor"
+        ]
+    )
+
+    resumo_financeiro["Valor"] = (
+        resumo_financeiro["Valor"]
+        .apply(dinheiro)
+    )
+
+    st.dataframe(
+        resumo_financeiro,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    secao(
+        "Gastos por categoria"
+    )
+
+    gastos_categoria = (
+        gastos
+        .groupby("Categoria")["Valor"]
+        .sum()
+        .sort_values(
+            ascending=False
+        )
+    )
+
+    if not gastos_categoria.empty:
+
+        st.bar_chart(
+            gastos_categoria,
+            height=300
+        )
+
+
+# ============================================================
+# GASTOS
+# ============================================================
+
+elif pagina == "Gastos":
+
+    titulo_pagina(
+        "Gastos",
+        "Registre despesas e investimentos realizados pelo studio."
+    )
+
+    gastos = garantir_colunas_gastos(
+        st.session_state.gastos
+    )
+
+    st.session_state.gastos = gastos
+
+    total_gastos = gastos[
+        gastos["Tipo"] == "Gasto"
+    ]["Valor"].sum()
+
+    total_investimentos = gastos[
+        gastos["Tipo"] == "Investimento"
+    ]["Valor"].sum()
+
+    total_saidas = gastos[
+        "Valor"
+    ].sum()
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric(
+        "Gastos",
+        dinheiro(total_gastos)
+    )
+
+    c2.metric(
+        "Investimentos",
+        dinheiro(total_investimentos)
+    )
+
+    c3.metric(
+        "Total de saídas",
+        dinheiro(total_saidas)
+    )
+
+    secao(
+        "Registrar novo gasto"
+    )
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        data_gasto = st.date_input(
+            "Data",
+            value=date(2026, 9, 11),
+            key="data_novo_gasto"
+        )
+
+        descricao_gasto = st.text_input(
+            "Descrição",
+            key="descricao_novo_gasto"
+        )
+
+        categoria_gasto = st.selectbox(
+            "Categoria",
+            [
+                "Materiais",
+                "Despesas fixas",
+                "Marketing",
+                "Equipamentos",
+                "Manutenção",
+                "Outros"
+            ],
+            key="categoria_novo_gasto"
+        )
+
+    with col2:
+
+        tipo_gasto = st.selectbox(
+            "Tipo",
+            [
+                "Gasto",
+                "Investimento"
+            ],
+            key="tipo_novo_gasto"
+        )
+
+        valor_gasto = st.number_input(
+            "Valor",
+            min_value=0.0,
+            step=10.0,
+            format="%.2f",
+            key="valor_novo_gasto"
+        )
+
+        observacao_gasto = st.text_input(
+            "Observação",
+            key="observacao_novo_gasto"
+        )
+
+    if st.button(
+        "Registrar gasto",
+        type="primary",
+        use_container_width=True
+    ):
+
+        if not descricao_gasto.strip():
+
+            st.error(
+                "Informe a descrição do gasto."
+            )
+
+        elif valor_gasto <= 0:
+
+            st.error(
+                "Informe um valor maior que zero."
+            )
+
+        else:
+
+            novo_gasto = pd.DataFrame(
+                [
+                    [
+                        data_gasto,
+                        descricao_gasto.strip(),
+                        categoria_gasto,
+                        tipo_gasto,
+                        float(valor_gasto),
+                        observacao_gasto.strip()
+                    ]
+                ],
+                columns=[
+                    "Data",
+                    "Descrição",
+                    "Categoria",
+                    "Tipo",
+                    "Valor",
+                    "Observação"
+                ]
+            )
+
+            st.session_state.gastos = pd.concat(
+                [
+                    st.session_state.gastos,
+                    novo_gasto
+                ],
+                ignore_index=True
+            )
+
+            st.success(
+                "Gasto registrado com sucesso."
+            )
+
+    secao(
+        "Histórico de gastos"
+    )
+
+    if gastos.empty:
+
+        st.info(
+            "Ainda não existem gastos registrados."
+        )
+
+    else:
+
+        tabela_gastos = (
+            gastos
+            .sort_values(
+                "Data",
+                ascending=False
+            )
+            .copy()
+        )
+
+        tabela_gastos["Valor"] = (
+            tabela_gastos["Valor"]
+            .apply(dinheiro)
+        )
+
+        st.dataframe(
+            tabela_gastos,
+            use_container_width=True,
+            hide_index=True
+        )
+
+    secao(
+        "Gastos por categoria"
+    )
+
+    gastos_categoria = (
+        gastos
+        .groupby("Categoria")["Valor"]
+        .sum()
+        .sort_values(
+            ascending=False
+        )
+    )
+
+    if not gastos_categoria.empty:
+
+        st.bar_chart(
+            gastos_categoria,
+            height=300
         )
 
 
