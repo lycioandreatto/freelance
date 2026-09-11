@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import date, datetime
+from zoneinfo import ZoneInfo
 
 
 # ============================================================
@@ -407,7 +407,9 @@ def dinheiro(valor):
 
 def saudacao():
 
-    agora = datetime.now()
+    agora = datetime.now(
+        ZoneInfo("America/Maceio")
+    )
 
     hora = agora.hour
 
