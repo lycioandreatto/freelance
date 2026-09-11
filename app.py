@@ -1,1689 +1,1215 @@
 import streamlit as st
 import pandas as pd
-from datetime import date
+from datetime import date, datetime, timedelta
 
-# =========================================================
+# ============================================================
 # CONFIGURAÇÃO
-# =========================================================
+# ============================================================
 
 st.set_page_config(
-    page_title="GELADA EXPRESS",
-    page_icon="🍢",
+    page_title="Aura Beauty Studio",
+    page_icon="✦",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# =========================================================
-# ESTILO
-# =========================================================
+# ============================================================
+# CORES / ESTILO
+# ============================================================
 
 st.markdown("""
 <style>
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
+
+:root {
+    --orange: #F05A28;
+    --orange-dark: #D94718;
+    --cream: #FFF9F5;
+    --background: #F7F4F2;
+    --white: #FFFFFF;
+    --text: #292624;
+    --muted: #817873;
+    --border: #EDE5E0;
+    --soft-orange: #FFF0E9;
+    --green: #3E8B68;
+}
+
 .stApp {
-    background-color: #F4F5F7;
+    background: var(--background);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
 }
 
-[data-testid="stSidebar"] {
-    background-color: #22252A;
+section[data-testid="stSidebar"] {
+    background: #211F1E;
+    border-right: 0;
 }
 
-[data-testid="stSidebar"] * {
-    color: white;
+section[data-testid="stSidebar"] * {
+    color: #F9F4F1 !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label {
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+h1, h2, h3 {
+    font-family: 'Playfair Display', serif !important;
+    font-weight: 500 !important;
+    color: var(--text);
 }
 
 .titulo {
-    font-size: 32px;
-    font-weight: 800;
-    color: #22252A;
-    margin-bottom: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 4px;
 }
 
 .subtitulo {
-    color: #6B7078;
-    font-size: 15px;
-    margin-top: -5px;
-    margin-bottom: 25px;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+}
+
+.brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    color: #FFFFFF;
+    margin-bottom: 2px;
+}
+
+.brand-sub {
+    font-size: 11px;
+    color: #BDB3AE !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
 }
 
 .card {
-    background: white;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
     padding: 20px;
-    border-radius: 14px;
-    border: 1px solid #E7E8EA;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 16px;
 }
 
-.card-titulo {
-    color: #777D85;
-    font-size: 14px;
-    font-weight: 600;
+.card-title {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
 }
 
-.card-valor {
-    color: #22252A;
+.card-value {
     font-size: 28px;
-    font-weight: 800;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.card-small {
+    font-size: 12px;
+    color: var(--muted);
     margin-top: 5px;
 }
 
-.destaque {
-    color: #F2660D;
+.orange-card {
+    background: var(--orange);
+    color: white;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 16px;
+}
+
+.orange-card .card-title,
+.orange-card .card-value,
+.orange-card .card-small {
+    color: white !important;
+}
+
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 25px;
+    margin-top: 18px;
+    margin-bottom: 15px;
 }
 
 .insight {
+    background: var(--soft-orange);
+    border-left: 4px solid var(--orange);
+    border-radius: 12px;
+    padding: 15px 18px;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.agendamento {
     background: white;
-    padding: 18px;
-    border-radius: 14px;
-    border-left: 5px solid #F2660D;
-    border-top: 1px solid #E7E8EA;
-    border-right: 1px solid #E7E8EA;
-    border-bottom: 1px solid #E7E8EA;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 17px;
     margin-bottom: 10px;
 }
 
-.mesa-livre {
-    background: white;
-    border: 2px solid #E7E8EA;
-    border-radius: 14px;
-    padding: 18px;
-    text-align: center;
-}
-
-.mesa-ocupada {
-    background: #FFF4ED;
-    border: 2px solid #F2660D;
-    border-radius: 14px;
-    padding: 18px;
-    text-align: center;
-}
-
-div.stButton > button {
-    border-radius: 9px;
+.agendamento-hora {
+    font-size: 20px;
     font-weight: 600;
+    color: var(--orange);
+}
+
+.agendamento-cliente {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.agendamento-servico {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.status-confirmado {
+    background: #EAF6F0;
+    color: #34785A;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 11px;
+    display: inline-block;
+}
+
+.status-pendente {
+    background: #FFF2E5;
+    color: #B96319;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 11px;
+    display: inline-block;
+}
+
+.status-concluido {
+    background: #F0EDF8;
+    color: #68578C;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 11px;
+    display: inline-block;
+}
+
+.servico-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 20px;
+    height: 100%;
+}
+
+.servico-nome {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+}
+
+.servico-cat {
+    color: var(--orange);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.servico-preco {
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+.cliente-destaque {
+    background: linear-gradient(135deg, #FFF4ED, #FFFFFF);
+    border: 1px solid #F4DDD0;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.metric-positive {
+    color: var(--green);
+    font-size: 12px;
+}
+
+button {
+    border-radius: 10px !important;
+}
+
+div[data-testid="stMetric"] {
+    background: white;
+    border: 1px solid var(--border);
+    padding: 15px;
+    border-radius: 15px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# =========================================================
-# PRODUTOS INICIAIS
-# =========================================================
+# ============================================================
+# DADOS FICTÍCIOS
+# ============================================================
 
-PRODUTOS_INICIAIS = pd.DataFrame([
-    [1, "Espetinho de Carne", "Espetinhos", 12.00, 38, 10],
-    [2, "Espetinho de Frango", "Espetinhos", 10.00, 42, 10],
-    [3, "Espetinho de Coração", "Espetinhos", 10.00, 25, 8],
-    [4, "Espetinho Misto", "Espetinhos", 10.00, 31, 10],
-    [5, "Queijo Coalho", "Espetinhos", 10.00, 20, 8],
-    [6, "Medalhão de Carne", "Medalhões", 14.00, 18, 5],
-    [7, "Medalhão de Frango", "Medalhões", 14.00, 22, 5],
-    [8, "Linguiça Toscana", "Espetinhos", 10.00, 30, 10],
-    [9, "Pão de Alho", "Acompanhamentos", 7.00, 24, 8],
-    [10, "Batata Frita", "Acompanhamentos", 15.00, 16, 5],
-    [11, "Coca-Cola Lata", "Bebidas", 5.00, 35, 10],
-    [12, "Guaraná Lata", "Bebidas", 5.00, 28, 10],
-    [13, "Água Mineral", "Bebidas", 3.00, 40, 10],
-    [14, "Itaipava 600ml", "Bebidas", 8.00, 22, 8],
-    [15, "Brahma 600ml", "Bebidas", 10.00, 18, 6],
-    [16, "Heineken Long Neck", "Bebidas", 7.00, 15, 5],
-], columns=[
-    "ID",
-    "Produto",
-    "Categoria",
-    "Preço",
-    "Estoque",
-    "Estoque Mínimo"
-])
+servicos_iniciais = pd.DataFrame([
+    ["Unhas Postiças", "Unhas", 85.00, 90],
+    ["Alongamento em Gel", "Unhas", 150.00, 120],
+    ["Manicure", "Unhas", 35.00, 45],
+    ["Pedicure", "Unhas", 40.00, 50],
+    ["Sobrancelha", "Sobrancelhas", 35.00, 30],
+    ["Design de Sobrancelha", "Sobrancelhas", 55.00, 45],
+    ["Lash Lifting", "Cílios", 120.00, 75],
+    ["Extensão de Cílios", "Cílios", 160.00, 120],
+    ["Manutenção de Cílios", "Cílios", 100.00, 90],
+], columns=["Serviço", "Categoria", "Preço", "Duração"])
 
-# =========================================================
-# CLIENTES INICIAIS
-# =========================================================
+clientes_iniciais = pd.DataFrame([
+    ["Amanda Oliveira", "99999-1001", "08/09/2026", 14, 1280.00],
+    ["Juliana Santos", "99999-1002", "07/09/2026", 11, 975.00],
+    ["Camila Souza", "99999-1003", "06/09/2026", 9, 820.00],
+    ["Mariana Alves", "99999-1004", "05/09/2026", 8, 735.00],
+    ["Larissa Lima", "99999-1005", "04/09/2026", 7, 690.00],
+    ["Beatriz Costa", "99999-1006", "03/09/2026", 6, 520.00],
+    ["Fernanda Rocha", "99999-1007", "02/09/2026", 5, 445.00],
+    ["Isabela Martins", "99999-1008", "01/09/2026", 4, 380.00],
+    ["Gabriela Ferreira", "99999-1009", "30/08/2026", 4, 355.00],
+    ["Rafaela Mendes", "99999-1010", "29/08/2026", 3, 290.00],
+    ["Patricia Gomes", "99999-1011", "28/08/2026", 3, 270.00],
+    ["Nicole Almeida", "99999-1012", "27/08/2026", 2, 180.00],
+], columns=["Cliente", "Telefone", "Última Visita", "Visitas", "Total Gasto"])
 
-CLIENTES_INICIAIS = pd.DataFrame([
-    ["Carlos Henrique", "99999-1111", 12, 487.50, "08/09/2026"],
-    ["Mariana Souza", "99999-2222", 9, 361.00, "07/09/2026"],
-    ["João Pedro", "99999-3333", 8, 298.50, "06/09/2026"],
-    ["Ana Paula", "99999-4444", 7, 274.00, "05/09/2026"],
-    ["Rafael Santos", "99999-5555", 6, 241.00, "04/09/2026"],
-    ["Lucas Oliveira", "99999-6666", 5, 198.50, "03/09/2026"],
-], columns=[
-    "Cliente",
-    "Telefone",
-    "Pedidos",
-    "Total Gasto",
-    "Última Compra"
-])
+# ============================================================
+# GERAR AGENDAMENTOS FICTÍCIOS
+# ============================================================
 
-# =========================================================
-# VENDAS INICIAIS
-# =========================================================
+nomes = [
+    "Amanda Oliveira",
+    "Juliana Santos",
+    "Camila Souza",
+    "Mariana Alves",
+    "Larissa Lima",
+    "Beatriz Costa",
+    "Fernanda Rocha",
+    "Isabela Martins",
+    "Gabriela Ferreira",
+    "Rafaela Mendes",
+    "Patricia Gomes",
+    "Nicole Almeida"
+]
 
-VENDAS_INICIAIS = pd.DataFrame([
-    [
-        "09/09/2026",
-        "Mesa 01",
-        "Carlos Henrique",
-        86.00,
-        "Pix",
-        [
-            {"produto": "Espetinho de Carne", "quantidade": 3},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Itaipava 600ml", "quantidade": 1},
-            {"produto": "Coca-Cola Lata", "quantidade": 2},
-            {"produto": "Água Mineral", "quantidade": 4}
-        ]
-    ],
-    [
-        "09/09/2026",
-        "Mesa 03",
-        "Mariana Souza",
-        72.00,
-        "Cartão",
-        [
-            {"produto": "Medalhão de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Itaipava 600ml", "quantidade": 1},
-            {"produto": "Pão de Alho", "quantidade": 1},
-            {"produto": "Coca-Cola Lata", "quantidade": 1},
-            {"produto": "Água Mineral", "quantidade": 2}
-        ]
-    ],
-    [
-        "09/09/2026",
-        "Mesa 05",
-        "João Pedro",
-        124.00,
-        "Pix",
-        [
-            {"produto": "Batata Frita", "quantidade": 2},
-            {"produto": "Medalhão de Carne", "quantidade": 2},
-            {"produto": "Espetinho de Carne", "quantidade": 2},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Itaipava 600ml", "quantidade": 2},
-            {"produto": "Coca-Cola Lata", "quantidade": 2},
-            {"produto": "Água Mineral", "quantidade": 2}
-        ]
-    ],
-    [
-        "09/09/2026",
-        "Mesa 07",
-        "Ana Paula",
-        58.00,
-        "Dinheiro",
-        [
-            {"produto": "Medalhão de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Pão de Alho", "quantidade": 1},
-            {"produto": "Coca-Cola Lata", "quantidade": 1}
-        ]
-    ],
-    [
-        "09/09/2026",
-        "Mesa 02",
-        "Rafael Santos",
-        94.00,
-        "Pix",
-        [
-            {"produto": "Batata Frita", "quantidade": 1},
-            {"produto": "Medalhão de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Carne", "quantidade": 2},
-            {"produto": "Espetinho de Frango", "quantidade": 1},
-            {"produto": "Itaipava 600ml", "quantidade": 1},
-            {"produto": "Coca-Cola Lata", "quantidade": 2},
-            {"produto": "Água Mineral", "quantidade": 1},
-            {"produto": "Queijo Coalho", "quantidade": 1}
-        ]
-    ],
-    [
-        "08/09/2026",
-        "Mesa 04",
-        "Lucas Oliveira",
-        68.00,
-        "Cartão",
-        [
-            {"produto": "Batata Frita", "quantidade": 1},
-            {"produto": "Medalhão de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Frango", "quantidade": 1},
-            {"produto": "Pão de Alho", "quantidade": 1},
-            {"produto": "Coca-Cola Lata", "quantidade": 2}
-        ]
-    ],
-    [
-        "08/09/2026",
-        "Mesa 06",
-        "Carlos Henrique",
-        112.00,
-        "Pix",
-        [
-            {"produto": "Batata Frita", "quantidade": 2},
-            {"produto": "Medalhão de Carne", "quantidade": 2},
-            {"produto": "Espetinho de Carne", "quantidade": 2},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Pão de Alho", "quantidade": 1},
-            {"produto": "Água Mineral", "quantidade": 1}
-        ]
-    ],
-    [
-        "08/09/2026",
-        "Mesa 01",
-        "Mariana Souza",
-        79.00,
-        "Dinheiro",
-        [
-            {"produto": "Batata Frita", "quantidade": 1},
-            {"produto": "Medalhão de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Carne", "quantidade": 1},
-            {"produto": "Espetinho de Frango", "quantidade": 2},
-            {"produto": "Itaipava 600ml", "quantidade": 1},
-            {"produto": "Pão de Alho", "quantidade": 1},
-            {"produto": "Água Mineral", "quantidade": 1}
-        ]
+servicos_lista = [
+    "Unhas Postiças",
+    "Alongamento em Gel",
+    "Manicure",
+    "Pedicure",
+    "Sobrancelha",
+    "Design de Sobrancelha",
+    "Lash Lifting",
+    "Extensão de Cílios",
+    "Manutenção de Cílios"
+]
+
+precos = {
+    "Unhas Postiças": 85.00,
+    "Alongamento em Gel": 150.00,
+    "Manicure": 35.00,
+    "Pedicure": 40.00,
+    "Sobrancelha": 35.00,
+    "Design de Sobrancelha": 55.00,
+    "Lash Lifting": 120.00,
+    "Extensão de Cílios": 160.00,
+    "Manutenção de Cílios": 100.00
+}
+
+agenda_inicial = []
+
+datas = [
+    date(2026, 9, 8),
+    date(2026, 9, 9),
+    date(2026, 9, 10),
+    date(2026, 9, 11),
+    date(2026, 9, 12),
+    date(2026, 9, 13),
+    date(2026, 9, 15),
+    date(2026, 9, 16),
+    date(2026, 9, 17),
+    date(2026, 9, 18),
+]
+
+horarios = [
+    "08:00",
+    "09:30",
+    "11:00",
+    "13:00",
+    "14:30",
+    "16:00",
+    "17:30"
+]
+
+contador = 0
+
+for d in datas:
+    quantidade = 5 if d.weekday() < 5 else 4
+
+    for i in range(quantidade):
+        nome = nomes[contador % len(nomes)]
+        servico = servicos_lista[(contador * 2) % len(servicos_lista)]
+        horario = horarios[i]
+
+        if d < date(2026, 9, 11):
+            status = "Concluído"
+        elif d == date(2026, 9, 11):
+            status = ["Confirmado", "Confirmado", "Pendente", "Confirmado", "Pendente"][i]
+        else:
+            status = "Confirmado"
+
+        agenda_inicial.append([
+            d,
+            horario,
+            nome,
+            servico,
+            precos[servico],
+            status
+        ])
+
+        contador += 1
+
+agenda_inicial = pd.DataFrame(
+    agenda_inicial,
+    columns=[
+        "Data",
+        "Horário",
+        "Cliente",
+        "Serviço",
+        "Valor",
+        "Status"
     ]
-], columns=[
-    "Data",
-    "Mesa",
-    "Cliente",
-    "Valor",
-    "Pagamento",
-    "Itens"
-])
+)
 
-# =========================================================
+# ============================================================
 # SESSION STATE
-# =========================================================
+# ============================================================
 
-if "produtos" not in st.session_state:
-    st.session_state.produtos = PRODUTOS_INICIAIS.copy()
+if "servicos" not in st.session_state:
+    st.session_state.servicos = servicos_iniciais.copy()
 
 if "clientes" not in st.session_state:
-    st.session_state.clientes = CLIENTES_INICIAIS.copy()
+    st.session_state.clientes = clientes_iniciais.copy()
 
-if "vendas" not in st.session_state:
-    st.session_state.vendas = VENDAS_INICIAIS.copy()
+if "agenda" not in st.session_state:
+    st.session_state.agenda = agenda_inicial.copy()
 
-if "pedidos" not in st.session_state:
-    st.session_state.pedidos = []
-
-if "mesa_atual" not in st.session_state:
-    st.session_state.mesa_atual = None
-
-if "carrinho" not in st.session_state:
-    st.session_state.carrinho = []
-
-# =========================================================
+# ============================================================
 # FUNÇÕES
-# =========================================================
+# ============================================================
 
 def dinheiro(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def total_faturamento(df):
+    return df[df["Status"] == "Concluído"]["Valor"].sum()
+
+
+def visitas_por_cliente(df):
     return (
-        f"R$ {valor:,.2f}"
-        .replace(",", "X")
-        .replace(".", ",")
-        .replace("X", ".")
-    )
-
-
-def total_carrinho():
-    return sum(
-        item["preco"] * item["quantidade"]
-        for item in st.session_state.carrinho
-    )
-
-
-def adicionar_produto(produto):
-    for item in st.session_state.carrinho:
-        if item["id"] == produto["ID"]:
-            item["quantidade"] += 1
-            return
-
-    st.session_state.carrinho.append({
-        "id": produto["ID"],
-        "produto": produto["Produto"],
-        "preco": produto["Preço"],
-        "quantidade": 1
-    })
-
-
-def remover_produto(index):
-    if 0 <= index < len(st.session_state.carrinho):
-        st.session_state.carrinho.pop(index)
-
-
-def finalizar_pedido(mesa, cliente, pagamento):
-
-    if not st.session_state.carrinho:
-        return False
-
-    total = total_carrinho()
-
-    itens = []
-
-    for item in st.session_state.carrinho:
-        itens.append({
-            "produto": item["produto"],
-            "quantidade": item["quantidade"]
-        })
-
-        mask = st.session_state.produtos["ID"] == item["id"]
-
-        st.session_state.produtos.loc[
-            mask,
-            "Estoque"
-        ] -= item["quantidade"]
-
-    nova_venda = pd.DataFrame([[
-        date.today().strftime("%d/%m/%Y"),
-        f"Mesa {mesa:02d}",
-        cliente.strip() if cliente.strip() else "Consumidor",
-        total,
-        pagamento,
-        itens
-    ]], columns=[
-        "Data",
-        "Mesa",
-        "Cliente",
-        "Valor",
-        "Pagamento",
-        "Itens"
-    ])
-
-    st.session_state.vendas = pd.concat(
-        [
-            st.session_state.vendas,
-            nova_venda
-        ],
-        ignore_index=True
-    )
-
-    if cliente.strip():
-
-        nome = cliente.strip()
-
-        mask_cliente = (
-            st.session_state.clientes["Cliente"].str.lower()
-            == nome.lower()
+        df[df["Status"] == "Concluído"]
+        .groupby("Cliente")
+        .agg(
+            Visitas=("Cliente", "count"),
+            Gasto=("Valor", "sum")
         )
-
-        if mask_cliente.any():
-
-            st.session_state.clientes.loc[
-                mask_cliente,
-                "Pedidos"
-            ] += 1
-
-            st.session_state.clientes.loc[
-                mask_cliente,
-                "Total Gasto"
-            ] += total
-
-            st.session_state.clientes.loc[
-                mask_cliente,
-                "Última Compra"
-            ] = date.today().strftime("%d/%m/%Y")
-
-        else:
-
-            novo_cliente = pd.DataFrame([[
-                nome,
-                "",
-                1,
-                total,
-                date.today().strftime("%d/%m/%Y")
-            ]], columns=[
-                "Cliente",
-                "Telefone",
-                "Pedidos",
-                "Total Gasto",
-                "Última Compra"
-            ])
-
-            st.session_state.clientes = pd.concat(
-                [
-                    st.session_state.clientes,
-                    novo_cliente
-                ],
-                ignore_index=True
-            )
-
-    st.session_state.carrinho = []
-
-    return True
+        .sort_values("Gasto", ascending=False)
+    )
 
 
-def produtos_vendidos(vendas):
-
-    registros = []
-
-    for _, venda in vendas.iterrows():
-
-        if not isinstance(venda["Itens"], list):
-            continue
-
-        for item in venda["Itens"]:
-
-            registros.append({
-                "Produto": item["produto"],
-                "Quantidade": item["quantidade"]
-            })
-
-    if not registros:
-        return pd.DataFrame(
-            columns=["Produto", "Quantidade"]
-        )
-
-    return pd.DataFrame(registros)
-
-
-# =========================================================
+# ============================================================
 # SIDEBAR
-# =========================================================
+# ============================================================
 
-st.sidebar.markdown(
-    """
-    <div style="text-align:center; padding:10px 0 25px 0;">
-        <div style="font-size:38px;">🍢</div>
-        <div style="font-size:22px; font-weight:800; color:white;">
-            GELADA EXPRESS
-        </div>
-        <div style="font-size:12px; color:#F2660D; margin-top:3px;">
-            SISTEMA DE GESTÃO
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-pagina = st.sidebar.radio(
-    "MENU",
-    [
-        "Dashboard",
-        "Mesas / Pedidos",
-        "Produtos",
-        "Estoque",
-        "Clientes",
-        "Vendas"
-    ]
-)
-
-st.sidebar.divider()
-
-st.sidebar.caption("Demonstração")
-st.sidebar.caption("GELADA EXPRESS")
-st.sidebar.caption("Versão 1.0")
-
-# =========================================================
-# DASHBOARD
-# =========================================================
-
-if pagina == "Dashboard":
+with st.sidebar:
 
     st.markdown(
-        '<div class="titulo">Dashboard</div>',
+        """
+        <div class="brand">Aura Beauty</div>
+        <div class="brand-sub">Beauty Studio</div>
+        """,
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        '<div class="subtitulo">Visão gerencial da GELADA EXPRESS</div>',
-        unsafe_allow_html=True
-    )
-
-    vendas = st.session_state.vendas.copy()
-
-    vendas["DataConvertida"] = pd.to_datetime(
-        vendas["Data"],
-        dayfirst=True
-    )
-
-    # -----------------------------------------------------
-    # FILTRO
-    # -----------------------------------------------------
-
-    periodo = st.selectbox(
-        "Período analisado",
+    pagina = st.radio(
+        "Navegação",
         [
-            "Todo o período",
-            "Últimos 7 dias",
-            "Últimos 30 dias"
-        ]
+            "Visão geral",
+            "Agenda",
+            "Novo agendamento",
+            "Clientes",
+            "Serviços",
+            "Financeiro",
+            "Fidelização"
+        ],
+        label_visibility="collapsed"
     )
 
-    if periodo == "Últimos 7 dias":
+    st.markdown("---")
 
-        data_final = vendas["DataConvertida"].max()
-        data_inicial = data_final - pd.Timedelta(days=6)
+    st.caption("Aura Beauty Studio")
+    st.caption("Gestão inteligente do seu studio")
 
-        vendas_filtradas = vendas[
-            (vendas["DataConvertida"] >= data_inicial)
-            & (vendas["DataConvertida"] <= data_final)
-        ]
+# ============================================================
+# VISÃO GERAL
+# ============================================================
 
-    elif periodo == "Últimos 30 dias":
+if pagina == "Visão geral":
 
-        data_final = vendas["DataConvertida"].max()
-        data_inicial = data_final - pd.Timedelta(days=29)
-
-        vendas_filtradas = vendas[
-            (vendas["DataConvertida"] >= data_inicial)
-            & (vendas["DataConvertida"] <= data_final)
-        ]
-
-    else:
-
-        vendas_filtradas = vendas.copy()
-
-    # -----------------------------------------------------
-    # INDICADORES
-    # -----------------------------------------------------
-
-    faturamento = vendas_filtradas["Valor"].sum()
-    pedidos = len(vendas_filtradas)
-
-    ticket_medio = (
-        faturamento / pedidos
-        if pedidos > 0
-        else 0
+    st.markdown('<div class="titulo">Bom dia, Aura.</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Aqui está um resumo do desempenho do seu studio.</div>',
+        unsafe_allow_html=True
     )
 
-    clientes_atendidos = vendas_filtradas[
-        vendas_filtradas["Cliente"] != "Consumidor"
-    ]["Cliente"].nunique()
+    agenda = st.session_state.agenda
 
-    produtos_venda = produtos_vendidos(
-        vendas_filtradas
-    )
+    concluidos = agenda[agenda["Status"] == "Concluído"]
 
-    unidades_vendidas = (
-        produtos_venda["Quantidade"].sum()
-        if not produtos_venda.empty
-        else 0
-    )
+    faturamento = concluidos["Valor"].sum()
+    quantidade_visitas = len(concluidos)
+    ticket = faturamento / quantidade_visitas if quantidade_visitas else 0
+    clientes_ativos = concluidos["Cliente"].nunique()
 
-    col1, col2, col3, col4, col5 = st.columns(5)
+    c1, c2, c3, c4 = st.columns(4)
+
+    with c1:
+        st.markdown(
+            f"""
+            <div class="orange-card">
+                <div class="card-title">Faturamento</div>
+                <div class="card-value">{dinheiro(faturamento)}</div>
+                <div class="card-small">serviços concluídos</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c2:
+        st.markdown(
+            f"""
+            <div class="card">
+                <div class="card-title">Atendimentos</div>
+                <div class="card-value">{quantidade_visitas}</div>
+                <div class="metric-positive">↑ clientes atendidas</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c3:
+        st.markdown(
+            f"""
+            <div class="card">
+                <div class="card-title">Ticket médio</div>
+                <div class="card-value">{dinheiro(ticket)}</div>
+                <div class="card-small">por atendimento</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c4:
+        st.markdown(
+            f"""
+            <div class="card">
+                <div class="card-title">Clientes</div>
+                <div class="card-value">{clientes_ativos}</div>
+                <div class="card-small">clientes atendidas</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown('<div class="section-title">Movimento do studio</div>', unsafe_allow_html=True)
+
+    col1, col2 = st.columns([1.6, 1])
 
     with col1:
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-titulo">FATURAMENTO</div>
-                <div class="card-valor">{dinheiro(faturamento)}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-    with col2:
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-titulo">PEDIDOS</div>
-                <div class="card-valor">{pedidos}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-titulo">TICKET MÉDIO</div>
-                <div class="card-valor">{dinheiro(ticket_medio)}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col4:
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-titulo">CLIENTES</div>
-                <div class="card-valor">{clientes_atendidos}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col5:
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-titulo">ITENS VENDIDOS</div>
-                <div class="card-valor">{unidades_vendidas}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.write("")
-
-    # -----------------------------------------------------
-    # EVOLUÇÃO
-    # -----------------------------------------------------
-
-    st.subheader("Evolução do faturamento")
-
-    if not vendas_filtradas.empty:
-
-        faturamento_diario = (
-            vendas_filtradas
-            .groupby("DataConvertida")["Valor"]
+        diario = (
+            concluidos
+            .groupby("Data")["Valor"]
             .sum()
-            .sort_index()
+            .reset_index()
+        )
+
+        diario["Data"] = pd.to_datetime(diario["Data"])
+
+        st.markdown(
+            '<div class="card"><div class="card-title">Faturamento por dia</div>',
+            unsafe_allow_html=True
         )
 
         st.line_chart(
-            faturamento_diario,
-            height=300
+            diario.set_index("Data")["Valor"],
+            height=280
         )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    with col2:
+
+        ranking_servicos = (
+            concluidos
+            .groupby("Serviço")
+            .agg(
+                Atendimentos=("Serviço", "count"),
+                Faturamento=("Valor", "sum")
+            )
+            .sort_values("Faturamento", ascending=False)
+        )
+
+        st.markdown(
+            '<div class="card"><div class="card-title">Serviços mais procurados</div>',
+            unsafe_allow_html=True
+        )
+
+        st.dataframe(
+            ranking_servicos,
+            use_container_width=True,
+            height=280
+        )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown('<div class="section-title">Insights do studio</div>', unsafe_allow_html=True)
+
+    if not ranking_servicos.empty:
+
+        servico_top = ranking_servicos.index[0]
+        faturamento_top = ranking_servicos.iloc[0]["Faturamento"]
+
+        cliente_top = (
+            concluidos
+            .groupby("Cliente")["Valor"]
+            .sum()
+            .sort_values(ascending=False)
+        )
+
+        melhor_cliente = cliente_top.index[0]
+
+        st.markdown(
+            f"""
+            <div class="insight">
+                <strong>Serviço destaque:</strong> {servico_top} é o serviço que mais gera faturamento,
+                com {dinheiro(faturamento_top)} no período analisado.
+            </div>
+
+            <div class="insight">
+                <strong>Cliente de maior valor:</strong> {melhor_cliente} é a cliente que mais gastou no studio.
+            </div>
+
+            <div class="insight">
+                <strong>Ticket médio:</strong> cada atendimento gera aproximadamente {dinheiro(ticket)}.
+                Uma boa estratégia é oferecer combinações de serviços para aumentar esse valor.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# ============================================================
+# AGENDA
+# ============================================================
+
+elif pagina == "Agenda":
+
+    st.markdown('<div class="titulo">Agenda</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Visualize todos os atendimentos do studio.</div>',
+        unsafe_allow_html=True
+    )
+
+    agenda = st.session_state.agenda
+
+    data_selecionada = st.date_input(
+        "Escolha o dia",
+        value=date(2026, 9, 11)
+    )
+
+    agenda_dia = agenda[agenda["Data"] == data_selecionada].sort_values("Horário")
+
+    total_dia = agenda_dia["Valor"].sum()
+    concluidos_dia = len(
+        agenda_dia[agenda_dia["Status"] == "Concluído"]
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric(
+        "Agendamentos",
+        len(agenda_dia)
+    )
+
+    c2.metric(
+        "Concluídos",
+        concluidos_dia
+    )
+
+    c3.metric(
+        "Valor previsto",
+        dinheiro(total_dia)
+    )
+
+    st.markdown(
+        f'<div class="section-title">{data_selecionada.strftime("%d/%m/%Y")}</div>',
+        unsafe_allow_html=True
+    )
+
+    if agenda_dia.empty:
+
+        st.info("Nenhum agendamento para este dia.")
 
     else:
 
-        st.info("Não existem vendas nesse período.")
+        for _, row in agenda_dia.iterrows():
 
-    # -----------------------------------------------------
-    # PAGAMENTO E PRODUTOS
-    # -----------------------------------------------------
+            if row["Status"] == "Confirmado":
+                status_html = '<span class="status-confirmado">Confirmado</span>'
+            elif row["Status"] == "Pendente":
+                status_html = '<span class="status-pendente">Pendente</span>'
+            else:
+                status_html = '<span class="status-concluido">Concluído</span>'
+
+            st.markdown(
+                f"""
+                <div class="agendamento">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div class="agendamento-hora">{row["Horário"]}</div>
+                            <div class="agendamento-cliente">{row["Cliente"]}</div>
+                            <div class="agendamento-servico">
+                                {row["Serviço"]} · {dinheiro(row["Valor"])}
+                            </div>
+                        </div>
+                        <div>
+                            {status_html}
+                        </div>
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+# ============================================================
+# NOVO AGENDAMENTO
+# ============================================================
+
+elif pagina == "Novo agendamento":
+
+    st.markdown('<div class="titulo">Novo agendamento</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Agende um novo atendimento para sua cliente.</div>',
+        unsafe_allow_html=True
+    )
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        st.subheader("Faturamento por pagamento")
-
-        pagamentos = (
-            vendas_filtradas
-            .groupby("Pagamento")["Valor"]
-            .sum()
-            .sort_values(ascending=False)
+        nome = st.text_input(
+            "Nome da cliente"
         )
 
-        if not pagamentos.empty:
-            st.bar_chart(
-                pagamentos,
-                height=280
-            )
-        else:
-            st.info("Sem dados.")
+        telefone = st.text_input(
+            "WhatsApp"
+        )
+
+        data = st.date_input(
+            "Data",
+            value=date(2026, 9, 15)
+        )
 
     with col2:
 
-        st.subheader("Produtos mais vendidos")
+        servico = st.selectbox(
+            "Serviço",
+            st.session_state.servicos["Serviço"].tolist()
+        )
 
-        if not produtos_venda.empty:
+        horario = st.selectbox(
+            "Horário",
+            [
+                "08:00",
+                "09:30",
+                "11:00",
+                "13:00",
+                "14:30",
+                "16:00",
+                "17:30",
+                "19:00"
+            ]
+        )
 
-            ranking_produtos = (
-                produtos_venda
-                .groupby("Produto")["Quantidade"]
-                .sum()
-                .sort_values(ascending=False)
-                .head(8)
-            )
+        status = st.selectbox(
+            "Status",
+            ["Confirmado", "Pendente"]
+        )
 
-            st.bar_chart(
-                ranking_produtos,
-                height=280
-            )
+    servico_info = st.session_state.servicos[
+        st.session_state.servicos["Serviço"] == servico
+    ].iloc[0]
+
+    st.markdown(
+        f"""
+        <div class="cliente-destaque">
+            <div class="card-title">Resumo do atendimento</div>
+            <strong>{servico}</strong><br>
+            Duração aproximada: {servico_info["Duração"]} minutos<br>
+            Valor: <strong>{dinheiro(servico_info["Preço"])}</strong>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.write("")
+
+    if st.button(
+        "Confirmar agendamento",
+        type="primary",
+        use_container_width=True
+    ):
+
+        if not nome:
+            st.error("Informe o nome da cliente.")
 
         else:
 
-            st.info("Sem produtos registrados.")
+            novo = pd.DataFrame([[
+                data,
+                horario,
+                nome,
+                servico,
+                float(servico_info["Preço"]),
+                status
+            ]], columns=[
+                "Data",
+                "Horário",
+                "Cliente",
+                "Serviço",
+                "Valor",
+                "Status"
+            ])
 
-    st.divider()
+            st.session_state.agenda = pd.concat(
+                [st.session_state.agenda, novo],
+                ignore_index=True
+            )
 
-    # -----------------------------------------------------
-    # DESEMPENHO DOS PRODUTOS
-    # -----------------------------------------------------
+            clientes = st.session_state.clientes
 
-    st.subheader("Desempenho dos produtos")
+            if nome not in clientes["Cliente"].values:
 
-    if not produtos_venda.empty:
+                novo_cliente = pd.DataFrame([[
+                    nome,
+                    telefone,
+                    data.strftime("%d/%m/%Y"),
+                    0,
+                    0.00
+                ]], columns=clientes.columns)
 
-        ranking = (
-            produtos_venda
-            .groupby("Produto")["Quantidade"]
-            .sum()
-            .sort_values(ascending=False)
+                st.session_state.clientes = pd.concat(
+                    [clientes, novo_cliente],
+                    ignore_index=True
+                )
+
+            st.success(
+                f"Agendamento de {nome} criado com sucesso."
+            )
+
+# ============================================================
+# CLIENTES
+# ============================================================
+
+elif pagina == "Clientes":
+
+    st.markdown('<div class="titulo">Clientes</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Conheça melhor quem frequenta o Aura Beauty Studio.</div>',
+        unsafe_allow_html=True
+    )
+
+    clientes = st.session_state.clientes
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric(
+        "Clientes cadastradas",
+        len(clientes)
+    )
+
+    c2.metric(
+        "Clientes recorrentes",
+        len(clientes[clientes["Visitas"] >= 5])
+    )
+
+    c3.metric(
+        "Valor médio por cliente",
+        dinheiro(clientes["Total Gasto"].mean())
+    )
+
+    st.markdown(
+        '<div class="section-title">Ranking de clientes</div>',
+        unsafe_allow_html=True
+    )
+
+    ranking = clientes.sort_values(
+        "Total Gasto",
+        ascending=False
+    ).copy()
+
+    ranking["Total Gasto"] = ranking["Total Gasto"].apply(dinheiro)
+
+    st.dataframe(
+        ranking,
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.markdown(
+        '<div class="section-title">Adicionar cliente</div>',
+        unsafe_allow_html=True
+    )
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        novo_nome = st.text_input(
+            "Nome",
+            key="novo_cliente_nome"
         )
 
-        produto_lider = ranking.index[0]
-        quantidade_lider = ranking.iloc[0]
-
-        produto_menor_saida = ranking.index[-1]
-        quantidade_menor_saida = ranking.iloc[-1]
-
-        total_unidades = ranking.sum()
-
-        participacao_lider = (
-            quantidade_lider / total_unidades * 100
-            if total_unidades > 0
-            else 0
+    with c2:
+        novo_telefone = st.text_input(
+            "WhatsApp",
+            key="novo_cliente_telefone"
         )
 
-        col1, col2, col3 = st.columns(3)
+    if st.button(
+        "Cadastrar cliente",
+        type="primary"
+    ):
+
+        if novo_nome:
+
+            novo_cliente = pd.DataFrame([[
+                novo_nome,
+                novo_telefone,
+                date.today().strftime("%d/%m/%Y"),
+                0,
+                0.00
+            ]], columns=clientes.columns)
+
+            st.session_state.clientes = pd.concat(
+                [clientes, novo_cliente],
+                ignore_index=True
+            )
+
+            st.success("Cliente cadastrada com sucesso.")
+
+        else:
+            st.error("Informe o nome da cliente.")
+
+# ============================================================
+# SERVIÇOS
+# ============================================================
+
+elif pagina == "Serviços":
+
+    st.markdown('<div class="titulo">Serviços</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Catálogo de serviços oferecidos pelo Aura Beauty Studio.</div>',
+        unsafe_allow_html=True
+    )
+
+    servicos = st.session_state.servicos
+
+    categorias = servicos["Categoria"].unique()
+
+    for categoria in categorias:
+
+        st.markdown(
+            f'<div class="section-title">{categoria}</div>',
+            unsafe_allow_html=True
+        )
+
+        dados = servicos[
+            servicos["Categoria"] == categoria
+        ]
+
+        colunas = st.columns(3)
+
+        for i, (_, row) in enumerate(dados.iterrows()):
+
+            with colunas[i % 3]:
+
+                st.markdown(
+                    f"""
+                    <div class="servico-card">
+                        <div class="servico-cat">{row["Categoria"]}</div>
+                        <div class="servico-nome">{row["Serviço"]}</div>
+                        <div class="card-small">
+                            Aproximadamente {row["Duração"]} minutos
+                        </div>
+                        <div class="servico-preco">
+                            {dinheiro(row["Preço"])}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+# ============================================================
+# FINANCEIRO
+# ============================================================
+
+elif pagina == "Financeiro":
+
+    st.markdown('<div class="titulo">Financeiro</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Acompanhe o faturamento e o desempenho dos serviços.</div>',
+        unsafe_allow_html=True
+    )
+
+    agenda = st.session_state.agenda
+
+    concluidos = agenda[
+        agenda["Status"] == "Concluído"
+    ].copy()
+
+    if concluidos.empty:
+
+        st.info("Ainda não existem atendimentos concluídos.")
+
+    else:
+
+        faturamento = concluidos["Valor"].sum()
+        quantidade = len(concluidos)
+        ticket = faturamento / quantidade
+
+        c1, c2, c3 = st.columns(3)
+
+        c1.metric(
+            "Faturamento total",
+            dinheiro(faturamento)
+        )
+
+        c2.metric(
+            "Atendimentos",
+            quantidade
+        )
+
+        c3.metric(
+            "Ticket médio",
+            dinheiro(ticket)
+        )
+
+        st.markdown(
+            '<div class="section-title">Faturamento por serviço</div>',
+            unsafe_allow_html=True
+        )
+
+        financeiro_servico = (
+            concluidos
+            .groupby("Serviço")
+            .agg(
+                Atendimentos=("Serviço", "count"),
+                Faturamento=("Valor", "sum")
+            )
+            .sort_values("Faturamento", ascending=False)
+        )
+
+        col1, col2 = st.columns([1.2, 1])
 
         with col1:
 
-            st.markdown(
-                f"""
-                <div class="card">
-                    <div class="card-titulo">
-                        PRODUTO MAIS VENDIDO
-                    </div>
-                    <div class="card-valor destaque">
-                        {produto_lider}
-                    </div>
-                    <div style="color:#777D85;">
-                        {quantidade_lider} unidades
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            st.bar_chart(
+                financeiro_servico["Faturamento"],
+                height=350
             )
 
         with col2:
 
-            st.markdown(
-                f"""
-                <div class="card">
-                    <div class="card-titulo">
-                        PARTICIPAÇÃO DO LÍDER
-                    </div>
-                    <div class="card-valor">
-                        {participacao_lider:.1f}%
-                    </div>
-                    <div style="color:#777D85;">
-                        das unidades vendidas
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            tabela = financeiro_servico.copy()
+
+            tabela["Ticket Médio"] = (
+                tabela["Faturamento"] /
+                tabela["Atendimentos"]
             )
 
-        with col3:
+            tabela["Faturamento"] = tabela["Faturamento"].apply(dinheiro)
+            tabela["Ticket Médio"] = tabela["Ticket Médio"].apply(dinheiro)
 
-            st.markdown(
-                f"""
-                <div class="card">
-                    <div class="card-titulo">
-                        MENOR SAÍDA
-                    </div>
-                    <div class="card-valor">
-                        {produto_menor_saida}
-                    </div>
-                    <div style="color:#777D85;">
-                        {quantidade_menor_saida} unidades
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
+            st.dataframe(
+                tabela,
+                use_container_width=True,
+                height=350
             )
 
-        st.write("")
-
-        tabela_produtos = ranking.reset_index()
-        tabela_produtos.columns = [
-            "Produto",
-            "Quantidade Vendida"
-        ]
-
-        st.dataframe(
-            tabela_produtos,
-            use_container_width=True,
-            hide_index=True
+        st.markdown(
+            '<div class="section-title">Faturamento por dia</div>',
+            unsafe_allow_html=True
         )
+
+        por_dia = (
+            concluidos
+            .groupby("Data")["Valor"]
+            .sum()
+            .sort_index()
+        )
+
+        st.bar_chart(
+            por_dia,
+            height=300
+        )
+
+# ============================================================
+# FIDELIZAÇÃO
+# ============================================================
+
+elif pagina == "Fidelização":
+
+    st.markdown('<div class="titulo">Fidelização</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="subtitulo">Entenda o comportamento das clientes e descubra quem mais valoriza o studio.</div>',
+        unsafe_allow_html=True
+    )
+
+    agenda = st.session_state.agenda
+
+    concluidos = agenda[
+        agenda["Status"] == "Concluído"
+    ].copy()
+
+    if concluidos.empty:
+
+        st.info("Ainda não existem dados suficientes.")
 
     else:
 
-        st.info("Ainda não existem produtos vendidos.")
+        visitas = visitas_por_cliente(concluidos)
 
-    st.divider()
+        cliente_fiel = visitas.sort_values(
+            "Visitas",
+            ascending=False
+        ).index[0]
 
-    # -----------------------------------------------------
-    # CLIENTES
-    # -----------------------------------------------------
+        maior_gasto = visitas.sort_values(
+            "Gasto",
+            ascending=False
+        ).index[0]
 
-    col1, col2 = st.columns([1.3, 1])
+        c1, c2, c3 = st.columns(3)
 
-    with col1:
+        c1.metric(
+            "Cliente com mais visitas",
+            cliente_fiel
+        )
 
-        st.subheader("Clientes que mais compram")
+        c2.metric(
+            "Cliente que mais gastou",
+            maior_gasto
+        )
 
-        clientes_periodo = vendas_filtradas[
-            vendas_filtradas["Cliente"] != "Consumidor"
+        c3.metric(
+            "Clientes recorrentes",
+            len(visitas[visitas["Visitas"] >= 3])
+        )
+
+        st.markdown(
+            '<div class="section-title">Clientes mais fiéis</div>',
+            unsafe_allow_html=True
+        )
+
+        ranking_visitas = visitas.sort_values(
+            ["Visitas", "Gasto"],
+            ascending=False
+        )
+
+        st.dataframe(
+            ranking_visitas,
+            use_container_width=True
+        )
+
+        st.markdown(
+            '<div class="section-title">Frequência das clientes</div>',
+            unsafe_allow_html=True
+        )
+
+        frequencia = pd.cut(
+            visitas["Visitas"],
+            bins=[0, 2, 4, 7, 100],
+            labels=[
+                "1–2 visitas",
+                "3–4 visitas",
+                "5–7 visitas",
+                "8+ visitas"
+            ]
+        )
+
+        distribuicao = frequencia.value_counts().sort_index()
+
+        st.bar_chart(
+            distribuicao,
+            height=300
+        )
+
+        st.markdown(
+            '<div class="section-title">Oportunidades</div>',
+            unsafe_allow_html=True
+        )
+
+        clientes_inativos = st.session_state.clientes.copy()
+
+        clientes_inativos["Última"] = pd.to_datetime(
+            clientes_inativos["Última Visita"],
+            dayfirst=True,
+            errors="coerce"
+        )
+
+        referencia = clientes_inativos["Última"].max()
+
+        clientes_inativos["Dias sem visitar"] = (
+            referencia - clientes_inativos["Última"]
+        ).dt.days
+
+        inativos = clientes_inativos[
+            clientes_inativos["Dias sem visitar"] >= 7
         ]
 
-        if not clientes_periodo.empty:
-
-            ranking_clientes = (
-                clientes_periodo
-                .groupby("Cliente")
-                .agg(
-                    Pedidos=("Valor", "count"),
-                    Total=("Valor", "sum")
-                )
-                .sort_values(
-                    "Total",
-                    ascending=False
-                )
-                .head(8)
-            )
-
-            ranking_clientes_exibicao = ranking_clientes.copy()
-
-            ranking_clientes_exibicao["Total"] = (
-                ranking_clientes_exibicao["Total"]
-                .apply(dinheiro)
-            )
-
-            st.dataframe(
-                ranking_clientes_exibicao,
-                use_container_width=True
-            )
-
-        else:
-
-            st.info("Nenhum cliente identificado no período.")
-
-    with col2:
-
-        st.subheader("Formas de pagamento")
-
-        if not pagamentos.empty:
-
-            total_pagamentos = pagamentos.sum()
-
-            for pagamento, valor in pagamentos.items():
-
-                percentual = (
-                    valor / total_pagamentos * 100
-                    if total_pagamentos > 0
-                    else 0
-                )
-
-                st.write(
-                    f"**{pagamento}** — "
-                    f"{dinheiro(valor)} "
-                    f"({percentual:.1f}%)"
-                )
-
-                st.progress(
-                    min(percentual / 100, 1.0)
-                )
-
-    st.divider()
-
-    # -----------------------------------------------------
-    # ESTOQUE
-    # -----------------------------------------------------
-
-    st.subheader("Alertas operacionais")
-
-    estoque = st.session_state.produtos.copy()
-
-    estoque_baixo = estoque[
-        estoque["Estoque"] <= estoque["Estoque Mínimo"]
-    ].copy()
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        if not estoque_baixo.empty:
-
-            st.warning(
-                f"{len(estoque_baixo)} produto(s) "
-                f"atingiram o estoque mínimo."
-            )
-
-            for _, produto in estoque_baixo.iterrows():
-
-                st.write(
-                    f"🔴 **{produto['Produto']}** — "
-                    f"{produto['Estoque']} unidades "
-                    f"(mínimo: {produto['Estoque Mínimo']})"
-                )
-
-        else:
-
-            st.success(
-                "Nenhum produto atingiu o estoque mínimo."
-            )
-
-    with col2:
-
-        if not produtos_venda.empty:
-
-            st.write("**Produtos com maior saída:**")
-
-            for posicao, (produto, quantidade) in enumerate(
-                ranking.head(3).items(),
-                start=1
-            ):
-
-                st.write(
-                    f"{posicao}. **{produto}** — "
-                    f"{quantidade} unidades"
-                )
-
-    # -----------------------------------------------------
-    # INSIGHTS
-    # -----------------------------------------------------
-
-    st.divider()
-
-    st.subheader("💡 Insights do negócio")
-
-    insights = []
-
-    if pedidos > 0:
-
-        insights.append(
-            f"O período registrou **{pedidos} pedidos**, "
-            f"gerando **{dinheiro(faturamento)}** "
-            f"de faturamento."
-        )
-
-        insights.append(
-            f"O ticket médio atual é de "
-            f"**{dinheiro(ticket_medio)} por pedido**."
-        )
-
-    if not produtos_venda.empty:
-
-        insights.append(
-            f"O produto com maior saída foi "
-            f"**{produto_lider}**, com "
-            f"**{quantidade_lider} unidades vendidas**."
-        )
-
-    if not pagamentos.empty:
-
-        pagamento_principal = pagamentos.index[0]
-        valor_principal = pagamentos.iloc[0]
-
-        percentual_principal = (
-            valor_principal / pagamentos.sum() * 100
-        )
-
-        insights.append(
-            f"**{pagamento_principal}** foi a principal "
-            f"forma de pagamento, representando "
-            f"**{percentual_principal:.1f}%** do faturamento."
-        )
-
-    if clientes_atendidos > 0:
-
-        clientes_com_mais_de_um_pedido = (
-            clientes_periodo
-            .groupby("Cliente")
-            .size()
-        )
-
-        recorrentes = (
-            clientes_com_mais_de_um_pedido >= 2
-        ).sum()
-
-        if recorrentes > 0:
-
-            insights.append(
-                f"{recorrentes} cliente(s) realizaram "
-                f"mais de um pedido no período, "
-                f"indicando recorrência de compra."
-            )
-
-    if not estoque_baixo.empty:
-
-        insights.append(
-            f"Existem **{len(estoque_baixo)} produto(s)** "
-            f"que precisam ser acompanhados para evitar "
-            f"falta de estoque."
-        )
-
-    if insights:
-
-        for insight in insights:
+        if not inativos.empty:
 
             st.markdown(
                 f"""
                 <div class="insight">
-                    {insight}
+                    <strong>{len(inativos)} clientes</strong> estão há pelo menos
+                    7 dias sem visitar o studio. Elas podem receber uma mensagem
+                    de retorno pelo WhatsApp.
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
-    else:
-
-        st.info(
-            "Ainda não existem dados suficientes "
-            "para gerar insights."
+        st.markdown(
+            """
+            <div class="insight">
+                <strong>Estratégia de fidelização:</strong>
+                clientes que já realizaram vários serviços podem receber
+                combinações personalizadas, como unhas + sobrancelha ou
+                cílios + sobrancelha.
+            </div>
+            """,
+            unsafe_allow_html=True
         )
-
-# =========================================================
-# MESAS / PEDIDOS
-# =========================================================
-
-elif pagina == "Mesas / Pedidos":
-
-    st.markdown(
-        '<div class="titulo">Mesas / Pedidos</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">'
-        'Controle de pedidos em tempo real'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    mesas = list(range(1, 11))
-
-    colunas = st.columns(5)
-
-    for indice, mesa in enumerate(mesas):
-
-        ocupada = st.session_state.mesa_atual == mesa
-
-        with colunas[indice % 5]:
-
-            if ocupada:
-
-                st.markdown(
-                    f"""
-                    <div class="mesa-ocupada">
-                        <div style="font-size:25px;">🍢</div>
-                        <b>MESA {mesa:02d}</b>
-                        <br>
-                        <span style="color:#F2660D;">
-                            EM ATENDIMENTO
-                        </span>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-            else:
-
-                st.markdown(
-                    f"""
-                    <div class="mesa-livre">
-                        <div style="font-size:25px;">🪑</div>
-                        <b>MESA {mesa:02d}</b>
-                        <br>
-                        <span style="color:#777D85;">
-                            Disponível
-                        </span>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-            if st.button(
-                "Abrir mesa",
-                key=f"mesa_{mesa}",
-                use_container_width=True
-            ):
-
-                st.session_state.mesa_atual = mesa
-                st.session_state.carrinho = []
-
-                st.rerun()
-
-    st.divider()
-
-    if st.session_state.mesa_atual is None:
-
-        st.info(
-            "Selecione uma mesa para iniciar um pedido."
-        )
-
-    else:
-
-        mesa = st.session_state.mesa_atual
-
-        st.subheader(
-            f"Pedido — Mesa {mesa:02d}"
-        )
-
-        col_produtos, col_pedido = st.columns(
-            [1.5, 1]
-        )
-
-        with col_produtos:
-
-            st.markdown("### Produtos")
-
-            categorias = sorted(
-                st.session_state.produtos["Categoria"]
-                .dropna()
-                .unique()
-                .tolist()
-            )
-
-            categoria = st.selectbox(
-                "Categoria",
-                ["Todas"] + categorias
-            )
-
-            produtos = st.session_state.produtos.copy()
-
-            if categoria != "Todas":
-
-                produtos = produtos[
-                    produtos["Categoria"] == categoria
-                ]
-
-            for _, produto in produtos.iterrows():
-
-                col1, col2, col3 = st.columns(
-                    [3, 1, 1]
-                )
-
-                with col1:
-
-                    st.write(
-                        f"**{produto['Produto']}**"
-                    )
-
-                    st.caption(
-                        produto["Categoria"]
-                    )
-
-                with col2:
-
-                    st.write(
-                        dinheiro(produto["Preço"])
-                    )
-
-                with col3:
-
-                    if st.button(
-                        "+",
-                        key=f"add_{produto['ID']}"
-                    ):
-
-                        adicionar_produto(produto)
-                        st.rerun()
-
-        with col_pedido:
-
-            st.markdown("### Pedido atual")
-
-            if not st.session_state.carrinho:
-
-                st.info(
-                    "Nenhum produto adicionado."
-                )
-
-            else:
-
-                for indice, item in enumerate(
-                    st.session_state.carrinho
-                ):
-
-                    subtotal = (
-                        item["preco"]
-                        * item["quantidade"]
-                    )
-
-                    col1, col2, col3 = st.columns(
-                        [3, 1, 1]
-                    )
-
-                    with col1:
-
-                        st.write(
-                            f"**{item['produto']}**"
-                        )
-
-                    with col2:
-
-                        st.write(
-                            f"{item['quantidade']}x"
-                        )
-
-                    with col3:
-
-                        st.write(
-                            dinheiro(subtotal)
-                        )
-
-                    if st.button(
-                        "Remover",
-                        key=f"remover_{indice}"
-                    ):
-
-                        remover_produto(indice)
-                        st.rerun()
-
-                st.divider()
-
-                st.markdown(
-                    f"""
-                    <div style="
-                        font-size:24px;
-                        font-weight:800;
-                        text-align:right;
-                        color:#F2660D;
-                    ">
-                        TOTAL: {dinheiro(total_carrinho())}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-                st.write("")
-
-                cliente = st.text_input(
-                    "Cliente",
-                    placeholder="Nome do cliente"
-                )
-
-                pagamento = st.selectbox(
-                    "Forma de pagamento",
-                    [
-                        "Pix",
-                        "Cartão",
-                        "Dinheiro"
-                    ]
-                )
-
-                col1, col2 = st.columns(2)
-
-                with col1:
-
-                    if st.button(
-                        "Finalizar pedido",
-                        type="primary",
-                        use_container_width=True
-                    ):
-
-                        finalizar_pedido(
-                            mesa,
-                            cliente,
-                            pagamento
-                        )
-
-                        st.session_state.mesa_atual = None
-
-                        st.success(
-                            "Pedido finalizado com sucesso!"
-                        )
-
-                        st.rerun()
-
-                with col2:
-
-                    if st.button(
-                        "Cancelar",
-                        use_container_width=True
-                    ):
-
-                        st.session_state.carrinho = []
-                        st.session_state.mesa_atual = None
-
-                        st.rerun()
-
-# =========================================================
-# PRODUTOS
-# =========================================================
-
-elif pagina == "Produtos":
-
-    st.markdown(
-        '<div class="titulo">Produtos</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">'
-        'Cadastro e gerenciamento do cardápio'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    produtos_editados = st.data_editor(
-        st.session_state.produtos,
-        use_container_width=True,
-        hide_index=True,
-        disabled=["ID"],
-        column_config={
-            "Preço": st.column_config.NumberColumn(
-                "Preço",
-                format="R$ %.2f"
-            ),
-            "Estoque": st.column_config.NumberColumn(
-                "Estoque",
-                min_value=0
-            ),
-            "Estoque Mínimo": st.column_config.NumberColumn(
-                "Estoque Mínimo",
-                min_value=0
-            )
-        },
-        key="editor_produtos"
-    )
-
-    st.session_state.produtos = produtos_editados.copy()
-
-# =========================================================
-# ESTOQUE
-# =========================================================
-
-elif pagina == "Estoque":
-
-    st.markdown(
-        '<div class="titulo">Estoque</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">'
-        'Acompanhamento dos produtos e alertas de reposição'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    produtos = st.session_state.produtos.copy()
-
-    estoque_baixo = produtos[
-        produtos["Estoque"] <= produtos["Estoque Mínimo"]
-    ]
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-
-        st.metric(
-            "Produtos cadastrados",
-            len(produtos)
-        )
-
-    with col2:
-
-        st.metric(
-            "Itens em estoque",
-            int(produtos["Estoque"].sum())
-        )
-
-    with col3:
-
-        st.metric(
-            "Estoque baixo",
-            len(estoque_baixo)
-        )
-
-    st.divider()
-
-    if not estoque_baixo.empty:
-
-        st.warning(
-            f"{len(estoque_baixo)} produto(s) "
-            "precisam de reposição."
-        )
-
-        st.dataframe(
-            estoque_baixo,
-            use_container_width=True,
-            hide_index=True
-        )
-
-    else:
-
-        st.success(
-            "Todos os produtos estão com estoque adequado."
-        )
-
-    st.divider()
-
-    st.subheader("Estoque atual")
-
-    st.dataframe(
-        produtos,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Preço": st.column_config.NumberColumn(
-                "Preço",
-                format="R$ %.2f"
-            )
-        }
-    )
-
-# =========================================================
-# CLIENTES
-# =========================================================
-
-elif pagina == "Clientes":
-
-    st.markdown(
-        '<div class="titulo">Clientes</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">'
-        'Relacionamento e frequência dos clientes'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    clientes = st.session_state.clientes.copy()
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-
-        st.metric(
-            "Clientes cadastrados",
-            len(clientes)
-        )
-
-    with col2:
-
-        st.metric(
-            "Pedidos registrados",
-            int(clientes["Pedidos"].sum())
-        )
-
-    with col3:
-
-        st.metric(
-            "Valor movimentado",
-            dinheiro(clientes["Total Gasto"].sum())
-        )
-
-    st.divider()
-
-    st.subheader("Clientes mais assíduos")
-
-    clientes_ordenados = clientes.sort_values(
-        "Pedidos",
-        ascending=False
-    )
-
-    st.dataframe(
-        clientes_ordenados,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Total Gasto": st.column_config.NumberColumn(
-                "Total Gasto",
-                format="R$ %.2f"
-            )
-        }
-    )
-
-    st.divider()
-
-    st.subheader("Novo cliente")
-
-    with st.form("novo_cliente"):
-
-        nome = st.text_input("Nome")
-        telefone = st.text_input("Telefone")
-
-        salvar = st.form_submit_button(
-            "Cadastrar cliente"
-        )
-
-        if salvar:
-
-            if nome.strip():
-
-                novo_cliente = pd.DataFrame([[
-                    nome.strip(),
-                    telefone.strip(),
-                    0,
-                    0.00,
-                    "-"
-                ]], columns=[
-                    "Cliente",
-                    "Telefone",
-                    "Pedidos",
-                    "Total Gasto",
-                    "Última Compra"
-                ])
-
-                st.session_state.clientes = pd.concat(
-                    [
-                        st.session_state.clientes,
-                        novo_cliente
-                    ],
-                    ignore_index=True
-                )
-
-                st.success(
-                    "Cliente cadastrado com sucesso."
-                )
-
-                st.rerun()
-
-            else:
-
-                st.error(
-                    "Informe o nome do cliente."
-                )
-
-# =========================================================
-# VENDAS
-# =========================================================
-
-elif pagina == "Vendas":
-
-    st.markdown(
-        '<div class="titulo">Vendas</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">'
-        'Histórico das vendas realizadas'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-    vendas = st.session_state.vendas.copy()
-
-    faturamento = vendas["Valor"].sum()
-    quantidade = len(vendas)
-
-    ticket_medio = (
-        faturamento / quantidade
-        if quantidade > 0
-        else 0
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-
-        st.metric(
-            "Faturamento",
-            dinheiro(faturamento)
-        )
-
-    with col2:
-
-        st.metric(
-            "Pedidos",
-            quantidade
-        )
-
-    with col3:
-
-        st.metric(
-            "Ticket médio",
-            dinheiro(ticket_medio)
-        )
-
-    st.divider()
-
-    filtro_pagamento = st.selectbox(
-        "Filtrar por pagamento",
-        [
-            "Todos",
-            "Pix",
-            "Cartão",
-            "Dinheiro"
-        ]
-    )
-
-    if filtro_pagamento != "Todos":
-
-        vendas = vendas[
-            vendas["Pagamento"] == filtro_pagamento
-        ]
-
-    vendas_exibicao = vendas.copy()
-
-    vendas_exibicao["Itens"] = vendas_exibicao["Itens"].apply(
-        lambda itens: ", ".join(
-            [
-                f"{item['produto']} ({item['quantidade']}x)"
-                for item in itens
-            ]
-        )
-        if isinstance(itens, list)
-        else ""
-    )
-
-    st.dataframe(
-        vendas_exibicao,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "Valor": st.column_config.NumberColumn(
-                "Valor",
-                format="R$ %.2f"
-            )
-        }
-    )
-
-    st.divider()
-
-    st.subheader("Resumo por forma de pagamento")
-
-    resumo_pagamento = (
-        vendas
-        .groupby("Pagamento")["Valor"]
-        .sum()
-        .sort_values(ascending=False)
-    )
-
-    if not resumo_pagamento.empty:
-
-        st.bar_chart(
-            resumo_pagamento,
-            height=300
-        )
-
-    else:
-
-        st.info("Não existem vendas para esse filtro.")
