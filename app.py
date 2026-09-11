@@ -1349,7 +1349,7 @@ if pagina == "Visão geral":
         <div class="welcome-header">
             <div class="eyebrow">DASHBOARD</div>
             <div class="welcome-title">
-                {saudacao()}, Lilly.
+                {saudacao()}, Adm.
             </div>
             <div class="welcome-description">
                 Aqui está um resumo do desempenho do seu studio.
