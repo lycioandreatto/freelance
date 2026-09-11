@@ -181,12 +181,20 @@ st.markdown(
         display: none !important;
     }
 
-    div[data-testid="stRadio"] div[role="radiogroup"] {
+        div[data-testid="stRadio"] div[role="radiogroup"] {
         display: flex !important;
         justify-content: flex-end;
         align-items: center;
         gap: 5px;
         flex-wrap: nowrap;
+
+        background: #FAF7F5;
+        border: 1px solid #EEE7E3;
+        border-radius: 14px;
+
+        padding: 5px;
+
+        box-shadow: 0 3px 12px rgba(45, 37, 32, 0.04);
     }
 
     div[data-testid="stRadio"] div[role="radiogroup"] > label {
