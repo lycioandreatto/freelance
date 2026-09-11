@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
+
 
 # ============================================================
 # CONFIGURAÇÃO
@@ -13,335 +14,225 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+
 # ============================================================
 # CORES E ESTILO
 # ============================================================
 
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
 
-:root {
-    --orange: #F05A28;
-    --orange-dark: #D94718;
-    --cream: #FFF9F5;
-    --background: #F7F4F2;
-    --white: #FFFFFF;
-    --text: #292624;
-    --muted: #817873;
-    --border: #EDE5E0;
-    --soft-orange: #FFF0E9;
-    --green: #3E8B68;
-    --pink-soft: #F9EEF0;
-}
+    :root {
+        --orange: #F05A28;
+        --orange-dark: #D94718;
+        --cream: #FFF9F5;
+        --background: #F7F4F2;
+        --white: #FFFFFF;
+        --text: #292624;
+        --muted: #817873;
+        --border: #EDE5E0;
+        --soft-orange: #FFF0E9;
+        --green: #3E8B68;
+    }
 
-.stApp {
-    background: var(--background);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-}
+    .stApp {
+        background: var(--background);
+        color: var(--text);
+        font-family: 'DM Sans', sans-serif;
+    }
 
-section[data-testid="stSidebar"] {
-    background: #211F1E;
-    border-right: 0;
-}
+    section[data-testid="stSidebar"] {
+        background: #211F1E;
+        border-right: 0;
+    }
 
-section[data-testid="stSidebar"] * {
-    color: #F9F4F1 !important;
-}
+    section[data-testid="stSidebar"] * {
+        color: #F9F4F1 !important;
+    }
 
-section[data-testid="stSidebar"] .stRadio label {
-    padding: 8px 10px;
-    border-radius: 10px;
-}
+    h1,
+    h2,
+    h3 {
+        font-family: 'Playfair Display', serif !important;
+        font-weight: 500 !important;
+        color: var(--text);
+    }
 
-h1, h2, h3 {
-    font-family: 'Playfair Display', serif !important;
-    font-weight: 500 !important;
-    color: var(--text);
-}
+    section[data-testid="stSidebar"] .stRadio label {
+        padding: 8px 10px;
+        border-radius: 10px;
+    }
 
-.brand {
-    font-family: 'Playfair Display', serif;
-    font-size: 29px;
-    color: #FFFFFF;
-    margin-bottom: 2px;
-}
+    div[data-testid="stMetric"] {
+        background: #FFFFFF;
+        border: 1px solid var(--border);
+        padding: 15px;
+        border-radius: 15px;
+    }
 
-.brand-sub {
-    font-size: 10px;
-    color: #BDB3AE !important;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    margin-bottom: 30px;
-}
+    div[data-testid="stMetricValue"] {
+        font-family: 'DM Sans', sans-serif;
+    }
 
-.titulo {
-    font-family: 'Playfair Display', serif;
-    font-size: 39px;
-    line-height: 1.1;
-    color: var(--text);
-    margin-bottom: 5px;
-}
+    .main-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 39px;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 5px;
+    }
 
-.subtitulo {
-    color: var(--muted);
-    font-size: 14px;
-    margin-bottom: 28px;
-}
+    .main-subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 28px;
+    }
 
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 25px;
-    margin-top: 22px;
-    margin-bottom: 15px;
-}
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 25px;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        color: var(--text);
+    }
 
-.card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 16px;
-}
+    .brand {
+        font-family: 'Playfair Display', serif;
+        font-size: 29px;
+        color: #FFFFFF;
+        margin-bottom: 2px;
+    }
 
-.card-title {
-    color: var(--muted);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
-}
+    .brand-sub {
+        font-size: 10px;
+        color: #BDB3AE !important;
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+    }
 
-.card-value {
-    font-size: 27px;
-    font-weight: 600;
-    color: var(--text);
-}
+    .small-muted {
+        color: var(--muted);
+        font-size: 13px;
+    }
 
-.card-small {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 5px;
-}
+    .orange-box {
+        background: var(--orange);
+        color: white;
+        border-radius: 16px;
+        padding: 20px;
+    }
 
-.orange-card {
-    background: var(--orange);
-    color: white;
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 16px;
-}
+    .orange-box-title {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: white;
+        margin-bottom: 8px;
+    }
 
-.orange-card .card-title,
-.orange-card .card-value,
-.orange-card .card-small {
-    color: white !important;
-}
+    .orange-box-value {
+        font-size: 27px;
+        font-weight: 600;
+        color: white;
+    }
 
-.insight {
-    background: var(--soft-orange);
-    border-left: 4px solid var(--orange);
-    border-radius: 12px;
-    padding: 15px 18px;
-    margin-bottom: 10px;
-    color: var(--text);
-}
+    .orange-box-small {
+        font-size: 12px;
+        color: white;
+        margin-top: 5px;
+    }
 
-.agendamento {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 17px;
-    margin-bottom: 10px;
-}
+    .insight-box {
+        background: var(--soft-orange);
+        border-left: 4px solid var(--orange);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+    }
 
-.agendamento-hora {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--orange);
-}
+    .service-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 21px;
+        color: var(--text);
+    }
 
-.agendamento-cliente {
-    font-weight: 600;
-    font-size: 15px;
-}
+    .service-category {
+        color: var(--orange);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        margin-bottom: 8px;
+    }
 
-.agendamento-servico {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 4px;
-}
+    .service-price {
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
 
-.status-confirmado {
-    background: #EAF6F0;
-    color: #34785A;
-    border-radius: 20px;
-    padding: 5px 11px;
-    font-size: 11px;
-    display: inline-block;
-}
+    button {
+        border-radius: 10px !important;
+    }
 
-.status-pendente {
-    background: #FFF2E5;
-    color: #B96319;
-    border-radius: 20px;
-    padding: 5px 11px;
-    font-size: 11px;
-    display: inline-block;
-}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-.status-concluido {
-    background: #F0EDF8;
-    color: #68578C;
-    border-radius: 20px;
-    padding: 5px 11px;
-    font-size: 11px;
-    display: inline-block;
-}
-
-.status-cancelado {
-    background: #F9EAEA;
-    color: #A54B4B;
-    border-radius: 20px;
-    padding: 5px 11px;
-    font-size: 11px;
-    display: inline-block;
-}
-
-.servico-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 20px;
-    height: 100%;
-}
-
-.servico-nome {
-    font-family: 'Playfair Display', serif;
-    font-size: 21px;
-}
-
-.servico-cat {
-    color: var(--orange);
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
-}
-
-.servico-preco {
-    font-size: 20px;
-    font-weight: 600;
-    margin-top: 12px;
-}
-
-.cliente-destaque {
-    background: linear-gradient(135deg, #FFF4ED, #FFFFFF);
-    border: 1px solid #F4DDD0;
-    border-radius: 18px;
-    padding: 20px;
-}
-
-.metric-positive {
-    color: var(--green);
-    font-size: 12px;
-}
-
-.ranking-number {
-    font-family: 'Playfair Display', serif;
-    font-size: 24px;
-    color: var(--orange);
-}
-
-.profile-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 22px;
-}
-
-.profile-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 25px;
-    margin-bottom: 4px;
-}
-
-.profile-info {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.progress-bg {
-    background: #EEE9E6;
-    border-radius: 10px;
-    height: 7px;
-    width: 100%;
-    margin-top: 8px;
-}
-
-.progress-fill {
-    background: var(--orange);
-    border-radius: 10px;
-    height: 7px;
-}
-
-div[data-testid="stMetric"] {
-    background: white;
-    border: 1px solid var(--border);
-    padding: 15px;
-    border-radius: 15px;
-}
-
-button {
-    border-radius: 10px !important;
-}
-
-</style>
-""", unsafe_allow_html=True)
 
 # ============================================================
 # DADOS INICIAIS
 # ============================================================
 
-servicos_iniciais = pd.DataFrame([
-    ["Unhas Postiças", "Unhas", 85.00, 90],
-    ["Alongamento em Gel", "Unhas", 150.00, 120],
-    ["Manicure", "Unhas", 35.00, 45],
-    ["Pedicure", "Unhas", 40.00, 50],
-    ["Sobrancelha", "Sobrancelhas", 35.00, 30],
-    ["Design de Sobrancelha", "Sobrancelhas", 55.00, 45],
-    ["Lash Lifting", "Cílios", 120.00, 75],
-    ["Extensão de Cílios", "Cílios", 160.00, 120],
-    ["Manutenção de Cílios", "Cílios", 100.00, 90],
-], columns=[
-    "Serviço",
-    "Categoria",
-    "Preço",
-    "Duração"
-])
+servicos_iniciais = pd.DataFrame(
+    [
+        ["Unhas Postiças", "Unhas", 85.00, 90],
+        ["Alongamento em Gel", "Unhas", 150.00, 120],
+        ["Manicure", "Unhas", 35.00, 45],
+        ["Pedicure", "Unhas", 40.00, 50],
+        ["Sobrancelha", "Sobrancelhas", 35.00, 30],
+        ["Design de Sobrancelha", "Sobrancelhas", 55.00, 45],
+        ["Lash Lifting", "Cílios", 120.00, 75],
+        ["Extensão de Cílios", "Cílios", 160.00, 120],
+        ["Manutenção de Cílios", "Cílios", 100.00, 90],
+    ],
+    columns=[
+        "Serviço",
+        "Categoria",
+        "Preço",
+        "Duração"
+    ]
+)
 
-clientes_iniciais = pd.DataFrame([
-    ["Amanda Oliveira", "99999-1001", "08/09/2026", 14, 1280.00],
-    ["Juliana Santos", "99999-1002", "07/09/2026", 11, 975.00],
-    ["Camila Souza", "99999-1003", "06/09/2026", 9, 820.00],
-    ["Mariana Alves", "99999-1004", "05/09/2026", 8, 735.00],
-    ["Larissa Lima", "99999-1005", "04/09/2026", 7, 690.00],
-    ["Beatriz Costa", "99999-1006", "03/09/2026", 6, 520.00],
-    ["Fernanda Rocha", "99999-1007", "02/09/2026", 5, 445.00],
-    ["Isabela Martins", "99999-1008", "01/09/2026", 4, 380.00],
-    ["Gabriela Ferreira", "99999-1009", "30/08/2026", 4, 355.00],
-    ["Rafaela Mendes", "99999-1010", "29/08/2026", 3, 290.00],
-    ["Patricia Gomes", "99999-1011", "28/08/2026", 3, 270.00],
-    ["Nicole Almeida", "99999-1012", "27/08/2026", 2, 180.00],
-], columns=[
-    "Cliente",
-    "Telefone",
-    "Última Visita",
-    "Visitas",
-    "Total Gasto"
-])
+
+clientes_iniciais = pd.DataFrame(
+    [
+        ["Amanda Oliveira", "99999-1001", "08/09/2026", 14, 1280.00],
+        ["Juliana Santos", "99999-1002", "07/09/2026", 11, 975.00],
+        ["Camila Souza", "99999-1003", "06/09/2026", 9, 820.00],
+        ["Mariana Alves", "99999-1004", "05/09/2026", 8, 735.00],
+        ["Larissa Lima", "99999-1005", "04/09/2026", 7, 690.00],
+        ["Beatriz Costa", "99999-1006", "03/09/2026", 6, 520.00],
+        ["Fernanda Rocha", "99999-1007", "02/09/2026", 5, 445.00],
+        ["Isabela Martins", "99999-1008", "01/09/2026", 4, 380.00],
+        ["Gabriela Ferreira", "99999-1009", "30/08/2026", 4, 355.00],
+        ["Rafaela Mendes", "99999-1010", "29/08/2026", 3, 290.00],
+        ["Patricia Gomes", "99999-1011", "28/08/2026", 3, 270.00],
+        ["Nicole Almeida", "99999-1012", "27/08/2026", 2, 180.00],
+    ],
+    columns=[
+        "Cliente",
+        "Telefone",
+        "Última Visita",
+        "Visitas",
+        "Total Gasto"
+    ]
+)
+
 
 # ============================================================
 # AGENDAMENTOS FICTÍCIOS
@@ -362,6 +253,7 @@ nomes = [
     "Nicole Almeida"
 ]
 
+
 servicos_lista = [
     "Unhas Postiças",
     "Alongamento em Gel",
@@ -374,6 +266,7 @@ servicos_lista = [
     "Manutenção de Cílios"
 ]
 
+
 precos = {
     "Unhas Postiças": 85.00,
     "Alongamento em Gel": 150.00,
@@ -385,6 +278,7 @@ precos = {
     "Extensão de Cílios": 160.00,
     "Manutenção de Cílios": 100.00
 }
+
 
 datas = [
     date(2026, 8, 25),
@@ -408,8 +302,9 @@ datas = [
     date(2026, 9, 15),
     date(2026, 9, 16),
     date(2026, 9, 17),
-    date(2026, 9, 18),
+    date(2026, 9, 18)
 ]
+
 
 horarios = [
     "08:00",
@@ -421,9 +316,11 @@ horarios = [
     "17:30"
 ]
 
+
 agenda_inicial = []
 
 contador = 0
+
 
 for d in datas:
 
@@ -431,7 +328,9 @@ for d in datas:
 
     for i in range(quantidade):
 
-        nome = nomes[contador % len(nomes)]
+        nome = nomes[
+            contador % len(nomes)
+        ]
 
         servico = servicos_lista[
             (contador * 2) % len(servicos_lista)
@@ -440,9 +339,11 @@ for d in datas:
         horario = horarios[i]
 
         if d < date(2026, 9, 11):
+
             status = "Concluído"
 
         elif d == date(2026, 9, 11):
+
             status = [
                 "Confirmado",
                 "Confirmado",
@@ -453,18 +354,22 @@ for d in datas:
             ][i]
 
         else:
+
             status = "Confirmado"
 
-        agenda_inicial.append([
-            d,
-            horario,
-            nome,
-            servico,
-            precos[servico],
-            status
-        ])
+        agenda_inicial.append(
+            [
+                d,
+                horario,
+                nome,
+                servico,
+                precos[servico],
+                status
+            ]
+        )
 
         contador += 1
+
 
 agenda_inicial = pd.DataFrame(
     agenda_inicial,
@@ -478,92 +383,6 @@ agenda_inicial = pd.DataFrame(
     ]
 )
 
-# ============================================================
-# SESSION STATE
-# ============================================================
-
-# IMPORTANTE:
-# Sempre reconstruímos a estrutura caso o Streamlit Cloud
-# tenha mantido dados antigos de uma versão anterior do app.
-
-if "servicos" not in st.session_state:
-    st.session_state.servicos = servicos_iniciais.copy()
-
-else:
-    servicos_atual = st.session_state.servicos
-
-    for coluna in servicos_iniciais.columns:
-
-        if coluna not in servicos_atual.columns:
-            st.session_state.servicos[coluna] = servicos_iniciais[coluna].values[
-                :len(servicos_atual)
-            ]
-
-    if len(servicos_atual) != len(servicos_iniciais):
-        st.session_state.servicos = servicos_iniciais.copy()
-
-
-if "clientes" not in st.session_state:
-    st.session_state.clientes = clientes_iniciais.copy()
-
-else:
-
-    clientes_atual = st.session_state.clientes
-
-    colunas_clientes = [
-        "Cliente",
-        "Telefone",
-        "Última Visita",
-        "Visitas",
-        "Total Gasto"
-    ]
-
-    # Se a estrutura antiga não tiver as colunas necessárias,
-    # substituímos pelos dados corretos.
-    estrutura_valida = all(
-        coluna in clientes_atual.columns
-        for coluna in colunas_clientes
-    )
-
-    if not estrutura_valida:
-
-        st.session_state.clientes = clientes_iniciais.copy()
-
-    else:
-
-        st.session_state.clientes = clientes_atual[
-            colunas_clientes
-        ].copy()
-
-
-if "agenda" not in st.session_state:
-    st.session_state.agenda = agenda_inicial.copy()
-
-else:
-
-    agenda_atual = st.session_state.agenda
-
-    colunas_agenda = [
-        "Data",
-        "Horário",
-        "Cliente",
-        "Serviço",
-        "Valor",
-        "Status"
-    ]
-
-    estrutura_agenda_valida = all(
-        coluna in agenda_atual.columns
-        for coluna in colunas_agenda
-    )
-
-    if not estrutura_agenda_valida:
-        st.session_state.agenda = agenda_inicial.copy()
-    else:
-        st.session_state.agenda = agenda_atual[
-            colunas_agenda
-        ].copy()
-
 
 # ============================================================
 # FUNÇÕES
@@ -571,8 +390,15 @@ else:
 
 def dinheiro(valor):
 
+    try:
+        valor = float(valor)
+
+    except (ValueError, TypeError):
+
+        valor = 0.0
+
     return (
-        f"R$ {float(valor):,.2f}"
+        f"R$ {valor:,.2f}"
         .replace(",", "X")
         .replace(".", ",")
         .replace("X", ".")
@@ -586,61 +412,280 @@ def saudacao():
     if hora < 12:
         return "Bom dia"
 
-    elif hora < 18:
+    if hora < 18:
         return "Boa tarde"
 
     return "Boa noite"
 
 
-def calcular_faturamento(df):
+def titulo_pagina(titulo, subtitulo):
 
-    if df.empty:
-        return 0
+    st.markdown(
+        f"## {titulo}"
+    )
 
-    return df[
-        df["Status"] == "Concluído"
-    ]["Valor"].sum()
+    st.caption(
+        subtitulo
+    )
 
 
-def calcular_ticket(df):
+def secao(titulo):
 
-    concluidos = df[
-        df["Status"] == "Concluído"
+    st.markdown(
+        f"### {titulo}"
+    )
+
+
+def garantir_colunas_clientes(df):
+
+    df = df.copy()
+
+    colunas = [
+        "Cliente",
+        "Telefone",
+        "Última Visita",
+        "Visitas",
+        "Total Gasto"
     ]
 
-    if len(concluidos) == 0:
-        return 0
+    for coluna in colunas:
 
-    return concluidos["Valor"].sum() / len(concluidos)
+        if coluna not in df.columns:
+
+            if coluna == "Visitas":
+                df[coluna] = 0
+
+            elif coluna == "Total Gasto":
+                df[coluna] = 0.0
+
+            else:
+                df[coluna] = ""
+
+    df["Visitas"] = pd.to_numeric(
+        df["Visitas"],
+        errors="coerce"
+    ).fillna(0)
+
+    df["Total Gasto"] = pd.to_numeric(
+        df["Total Gasto"],
+        errors="coerce"
+    ).fillna(0)
+
+    return df[colunas]
+
+
+def garantir_colunas_agenda(df):
+
+    df = df.copy()
+
+    colunas = [
+        "Data",
+        "Horário",
+        "Cliente",
+        "Serviço",
+        "Valor",
+        "Status"
+    ]
+
+    for coluna in colunas:
+
+        if coluna not in df.columns:
+
+            if coluna == "Valor":
+                df[coluna] = 0.0
+
+            else:
+                df[coluna] = ""
+
+    df["Valor"] = pd.to_numeric(
+        df["Valor"],
+        errors="coerce"
+    ).fillna(0)
+
+    return df[colunas]
 
 
 def obter_visitas_cliente(df):
 
-    concluidos = df[
-        df["Status"] == "Concluído"
-    ]
-
-    if concluidos.empty:
+    if df.empty:
 
         return pd.DataFrame(
             columns=[
+                "Cliente",
                 "Visitas",
                 "Gasto"
             ]
         )
 
-    return (
-        concluidos
+    dados = df[
+        df["Status"] == "Concluído"
+    ].copy()
+
+    if dados.empty:
+
+        return pd.DataFrame(
+            columns=[
+                "Cliente",
+                "Visitas",
+                "Gasto"
+            ]
+        )
+
+    dados["Valor"] = pd.to_numeric(
+        dados["Valor"],
+        errors="coerce"
+    ).fillna(0)
+
+    resultado = (
+        dados
         .groupby("Cliente")
         .agg(
             Visitas=("Cliente", "count"),
             Gasto=("Valor", "sum")
         )
-        .sort_values(
-            "Gasto",
-            ascending=False
-        )
+        .reset_index()
     )
+
+    return resultado
+
+
+def status_texto(status):
+
+    if status == "Confirmado":
+        return "🟢 Confirmado"
+
+    if status == "Pendente":
+        return "🟡 Pendente"
+
+    if status == "Concluído":
+        return "🟣 Concluído"
+
+    if status == "Cancelado":
+        return "🔴 Cancelado"
+
+    return status
+
+
+# ============================================================
+# SESSION STATE
+# ============================================================
+
+if "servicos" not in st.session_state:
+
+    st.session_state.servicos = (
+        servicos_iniciais.copy()
+    )
+
+else:
+
+    servicos_atual = (
+        st.session_state.servicos
+    )
+
+    if not isinstance(
+        servicos_atual,
+        pd.DataFrame
+    ):
+
+        st.session_state.servicos = (
+            servicos_iniciais.copy()
+        )
+
+    else:
+
+        colunas_servicos = [
+            "Serviço",
+            "Categoria",
+            "Preço",
+            "Duração"
+        ]
+
+        estrutura_valida = all(
+            coluna in servicos_atual.columns
+            for coluna in colunas_servicos
+        )
+
+        if not estrutura_valida:
+
+            st.session_state.servicos = (
+                servicos_iniciais.copy()
+            )
+
+        else:
+
+            st.session_state.servicos = (
+                servicos_atual[
+                    colunas_servicos
+                ].copy()
+            )
+
+
+if "clientes" not in st.session_state:
+
+    st.session_state.clientes = (
+        clientes_iniciais.copy()
+    )
+
+else:
+
+    clientes_atual = (
+        st.session_state.clientes
+    )
+
+    if not isinstance(
+        clientes_atual,
+        pd.DataFrame
+    ):
+
+        st.session_state.clientes = (
+            clientes_iniciais.copy()
+        )
+
+    else:
+
+        clientes_atual = (
+            garantir_colunas_clientes(
+                clientes_atual
+            )
+        )
+
+        st.session_state.clientes = (
+            clientes_atual
+        )
+
+
+if "agenda" not in st.session_state:
+
+    st.session_state.agenda = (
+        agenda_inicial.copy()
+    )
+
+else:
+
+    agenda_atual = (
+        st.session_state.agenda
+    )
+
+    if not isinstance(
+        agenda_atual,
+        pd.DataFrame
+    ):
+
+        st.session_state.agenda = (
+            agenda_inicial.copy()
+        )
+
+    else:
+
+        agenda_atual = (
+            garantir_colunas_agenda(
+                agenda_atual
+            )
+        )
+
+        st.session_state.agenda = (
+            agenda_atual
+        )
 
 
 # ============================================================
@@ -650,12 +695,14 @@ def obter_visitas_cliente(df):
 with st.sidebar:
 
     st.markdown(
-        """
-        <div class="brand">Aura Beauty</div>
-        <div class="brand-sub">Beauty Studio</div>
-        """,
-        unsafe_allow_html=True
+        "### Aura Beauty"
     )
+
+    st.caption(
+        "BEAUTY STUDIO"
+    )
+
+    st.write("")
 
     pagina = st.radio(
         "Navegação",
@@ -671,10 +718,16 @@ with st.sidebar:
         label_visibility="collapsed"
     )
 
-    st.markdown("---")
+    st.divider()
 
-    st.caption("Aura Beauty Studio")
-    st.caption("Gestão inteligente do seu studio")
+    st.caption(
+        "Aura Beauty Studio"
+    )
+
+    st.caption(
+        "Gestão inteligente do seu studio"
+    )
+
 
 # ============================================================
 # VISÃO GERAL
@@ -683,24 +736,26 @@ with st.sidebar:
 if pagina == "Visão geral":
 
     st.markdown(
-        f'<div class="titulo">{saudacao()}, Lilly.</div>',
-        unsafe_allow_html=True
+        f"# {saudacao()}, Lilly."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Aqui está um resumo do desempenho do seu studio.</div>',
-        unsafe_allow_html=True
+    st.caption(
+        "Aqui está um resumo do desempenho do seu studio."
     )
 
-    agenda = st.session_state.agenda
+    agenda = garantir_colunas_agenda(
+        st.session_state.agenda
+    )
 
     concluidos = agenda[
         agenda["Status"] == "Concluído"
-    ]
+    ].copy()
 
     faturamento = concluidos["Valor"].sum()
 
-    quantidade_visitas = len(concluidos)
+    quantidade_visitas = len(
+        concluidos
+    )
 
     ticket = (
         faturamento / quantidade_visitas
@@ -708,213 +763,177 @@ if pagina == "Visão geral":
         else 0
     )
 
-    clientes_ativos = concluidos[
-        "Cliente"
-    ].nunique()
+    clientes_ativos = (
+        concluidos["Cliente"].nunique()
+    )
+
+    data_hoje = date(
+        2026,
+        9,
+        11
+    )
 
     agendamentos_hoje = agenda[
-        agenda["Data"] == date(2026, 9, 11)
+        agenda["Data"] == data_hoje
     ]
 
     c1, c2, c3, c4 = st.columns(4)
 
     with c1:
 
-        st.markdown(
-            f"""
-            <div class="orange-card">
-                <div class="card-title">Faturamento</div>
-                <div class="card-value">{dinheiro(faturamento)}</div>
-                <div class="card-small">serviços concluídos</div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            "Faturamento",
+            dinheiro(faturamento)
+        )
+
+        st.caption(
+            "Serviços concluídos"
         )
 
     with c2:
 
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-title">Atendimentos</div>
-                <div class="card-value">{quantidade_visitas}</div>
-                <div class="metric-positive">clientes atendidas</div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            "Atendimentos",
+            quantidade_visitas
+        )
+
+        st.caption(
+            "Atendimentos realizados"
         )
 
     with c3:
 
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-title">Ticket médio</div>
-                <div class="card-value">{dinheiro(ticket)}</div>
-                <div class="card-small">por atendimento</div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            "Ticket médio",
+            dinheiro(ticket)
+        )
+
+        st.caption(
+            "Por atendimento"
         )
 
     with c4:
 
-        st.markdown(
-            f"""
-            <div class="card">
-                <div class="card-title">Hoje</div>
-                <div class="card-value">{len(agendamentos_hoje)}</div>
-                <div class="card-small">agendamentos</div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        st.metric(
+            "Hoje",
+            len(agendamentos_hoje)
         )
 
-    # --------------------------------------------------------
-    # AGENDA DO DIA
-    # --------------------------------------------------------
+        st.caption(
+            "Agendamentos"
+        )
 
-    st.markdown(
-        '<div class="section-title">Agenda de hoje</div>',
-        unsafe_allow_html=True
+    secao(
+        "Agenda de hoje"
     )
 
-    agenda_hoje = agenda[
-        agenda["Data"] == date(2026, 9, 11)
-    ].sort_values("Horário")
+    if agendamentos_hoje.empty:
 
-    if agenda_hoje.empty:
-
-        st.info("Nenhum agendamento para hoje.")
+        st.info(
+            "Nenhum agendamento para hoje."
+        )
 
     else:
 
-        col1, col2 = st.columns([1.5, 1])
+        col1, col2 = st.columns(
+            [1.5, 1]
+        )
 
         with col1:
 
-            for _, row in agenda_hoje.head(5).iterrows():
+            for _, row in (
+                agendamentos_hoje
+                .sort_values("Horário")
+                .head(5)
+                .iterrows()
+            ):
 
-                if row["Status"] == "Confirmado":
+                with st.container(
+                    border=True
+                ):
 
-                    status_html = (
-                        '<span class="status-confirmado">'
-                        'Confirmado'
-                        '</span>'
+                    horario_col, dados_col, status_col = st.columns(
+                        [0.8, 2.5, 1]
                     )
 
-                elif row["Status"] == "Pendente":
+                    with horario_col:
 
-                    status_html = (
-                        '<span class="status-pendente">'
-                        'Pendente'
-                        '</span>'
-                    )
+                        st.markdown(
+                            f"### {row['Horário']}"
+                        )
 
-                elif row["Status"] == "Concluído":
+                    with dados_col:
 
-                    status_html = (
-                        '<span class="status-concluido">'
-                        'Concluído'
-                        '</span>'
-                    )
+                        st.markdown(
+                            f"**{row['Cliente']}**"
+                        )
 
-                else:
+                        st.caption(
+                            f"{row['Serviço']} · "
+                            f"{dinheiro(row['Valor'])}"
+                        )
 
-                    status_html = (
-                        '<span class="status-cancelado">'
-                        'Cancelado'
-                        '</span>'
-                    )
+                    with status_col:
 
-                st.markdown(
-                    f"""
-                    <div class="agendamento">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <div class="agendamento-hora">
-                                    {row["Horário"]}
-                                </div>
-
-                                <div class="agendamento-cliente">
-                                    {row["Cliente"]}
-                                </div>
-
-                                <div class="agendamento-servico">
-                                    {row["Serviço"]} · {dinheiro(row["Valor"])}
-                                </div>
-                            </div>
-
-                            <div>
-                                {status_html}
-                            </div>
-                        </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                        st.write(
+                            status_texto(
+                                row["Status"]
+                            )
+                        )
 
         with col2:
 
             faturamento_hoje = (
-                agenda_hoje[
-                    agenda_hoje["Status"] != "Cancelado"
+                agendamentos_hoje[
+                    agendamentos_hoje["Status"]
+                    != "Cancelado"
                 ]["Valor"].sum()
             )
 
             confirmados = len(
-                agenda_hoje[
-                    agenda_hoje["Status"] == "Confirmado"
+                agendamentos_hoje[
+                    agendamentos_hoje["Status"]
+                    == "Confirmado"
                 ]
             )
 
             pendentes = len(
-                agenda_hoje[
-                    agenda_hoje["Status"] == "Pendente"
+                agendamentos_hoje[
+                    agendamentos_hoje["Status"]
+                    == "Pendente"
                 ]
             )
 
-            st.markdown(
-                f"""
-                <div class="card">
-                    <div class="card-title">
-                        Resumo do dia
-                    </div>
+            with st.container(
+                border=True
+            ):
 
-                    <div style="font-size:25px; font-weight:600;">
-                        {dinheiro(faturamento_hoje)}
-                    </div>
+                st.markdown(
+                    "### Resumo do dia"
+                )
 
-                    <div class="card-small">
-                        faturamento previsto
-                    </div>
+                st.metric(
+                    "Faturamento previsto",
+                    dinheiro(
+                        faturamento_hoje
+                    )
+                )
 
-                    <br>
+                st.write(
+                    f"**{confirmados}** confirmados"
+                )
 
-                    <div>
-                        <strong>{confirmados}</strong>
-                        confirmados
-                    </div>
+                st.write(
+                    f"**{pendentes}** pendentes"
+                )
 
-                    <div>
-                        <strong>{pendentes}</strong>
-                        pendentes
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-    # --------------------------------------------------------
-    # DESEMPENHO
-    # --------------------------------------------------------
-
-    st.markdown(
-        '<div class="section-title">Desempenho</div>',
-        unsafe_allow_html=True
+    secao(
+        "Desempenho"
     )
 
-    col1, col2 = st.columns([1.4, 1])
+    col1, col2 = st.columns(
+        [1.4, 1]
+    )
 
     with col1:
 
@@ -925,21 +944,32 @@ if pagina == "Visão geral":
             .reset_index()
         )
 
-        diario["Data"] = pd.to_datetime(
-            diario["Data"]
-        )
+        if not diario.empty:
 
-        st.markdown(
-            '<div class="card"><div class="card-title">Faturamento por dia</div>',
-            unsafe_allow_html=True
-        )
+            diario["Data"] = pd.to_datetime(
+                diario["Data"]
+            )
 
-        st.line_chart(
-            diario.set_index("Data")["Valor"],
-            height=280
-        )
+            with st.container(
+                border=True
+            ):
 
-        st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown(
+                    "**Faturamento por dia**"
+                )
+
+                st.line_chart(
+                    diario.set_index("Data")[
+                        "Valor"
+                    ],
+                    height=280
+                )
+
+        else:
+
+            st.info(
+                "Ainda não existem dados de faturamento."
+            )
 
     with col2:
 
@@ -947,8 +977,14 @@ if pagina == "Visão geral":
             concluidos
             .groupby("Serviço")
             .agg(
-                Atendimentos=("Serviço", "count"),
-                Faturamento=("Valor", "sum")
+                Atendimentos=(
+                    "Serviço",
+                    "count"
+                ),
+                Faturamento=(
+                    "Valor",
+                    "sum"
+                )
             )
             .sort_values(
                 "Faturamento",
@@ -956,34 +992,56 @@ if pagina == "Visão geral":
             )
         )
 
-        st.markdown(
-            '<div class="card"><div class="card-title">Serviços que mais faturam</div>',
-            unsafe_allow_html=True
-        )
+        with st.container(
+            border=True
+        ):
 
-        st.dataframe(
-            ranking_servicos,
-            use_container_width=True,
-            height=280
-        )
+            st.markdown(
+                "**Serviços que mais faturam**"
+            )
 
-        st.markdown("</div>", unsafe_allow_html=True)
+            if ranking_servicos.empty:
 
-    # --------------------------------------------------------
-    # INSIGHTS
-    # --------------------------------------------------------
+                st.info(
+                    "Sem dados."
+                )
 
-    st.markdown(
-        '<div class="section-title">Insights</div>',
-        unsafe_allow_html=True
+            else:
+
+                tabela = (
+                    ranking_servicos
+                    .reset_index()
+                    .copy()
+                )
+
+                tabela["Faturamento"] = (
+                    tabela["Faturamento"]
+                    .apply(dinheiro)
+                )
+
+                st.dataframe(
+                    tabela,
+                    use_container_width=True,
+                    hide_index=True,
+                    height=280
+                )
+
+    secao(
+        "Insights"
     )
 
     ranking_servicos = (
         concluidos
         .groupby("Serviço")
         .agg(
-            Atendimentos=("Serviço", "count"),
-            Faturamento=("Valor", "sum")
+            Atendimentos=(
+                "Serviço",
+                "count"
+            ),
+            Faturamento=(
+                "Valor",
+                "sum"
+            )
         )
         .sort_values(
             "Faturamento",
@@ -993,9 +1051,15 @@ if pagina == "Visão geral":
 
     if not ranking_servicos.empty:
 
-        servico_top = ranking_servicos.index[0]
+        servico_top = (
+            ranking_servicos.index[0]
+        )
 
-        faturamento_top = ranking_servicos.iloc[0]["Faturamento"]
+        faturamento_top = (
+            ranking_servicos.iloc[0][
+                "Faturamento"
+            ]
+        )
 
         cliente_top = (
             concluidos
@@ -1006,36 +1070,34 @@ if pagina == "Visão geral":
             )
         )
 
-        melhor_cliente = cliente_top.index[0]
-
-        st.markdown(
-            f"""
-            <div class="insight">
-                <strong>Serviço destaque:</strong>
-                {servico_top} lidera o faturamento com
-                {dinheiro(faturamento_top)}.
-            </div>
-
-            <div class="insight">
-                <strong>Cliente de maior valor:</strong>
-                {melhor_cliente} é a cliente que mais gastou
-                no studio.
-            </div>
-
-            <div class="insight">
-                <strong>Ticket médio:</strong>
-                cada atendimento gera aproximadamente
-                {dinheiro(ticket)}.
-            </div>
-
-            <div class="insight">
-                <strong>Oportunidade comercial:</strong>
-                oferecer combinações de serviços pode aumentar
-                o valor de cada atendimento.
-            </div>
-            """,
-            unsafe_allow_html=True
+        melhor_cliente = (
+            cliente_top.index[0]
         )
+
+        st.success(
+            f"**Serviço destaque:** "
+            f"{servico_top} lidera o faturamento "
+            f"com {dinheiro(faturamento_top)}."
+        )
+
+        st.info(
+            f"**Cliente de maior valor:** "
+            f"{melhor_cliente} é a cliente que "
+            f"mais gastou no studio."
+        )
+
+        st.info(
+            f"**Ticket médio:** "
+            f"cada atendimento gera aproximadamente "
+            f"{dinheiro(ticket)}."
+        )
+
+        st.warning(
+            "**Oportunidade comercial:** "
+            "oferecer combinações de serviços pode "
+            "aumentar o valor de cada atendimento."
+        )
+
 
 # ============================================================
 # AGENDA
@@ -1043,46 +1105,53 @@ if pagina == "Visão geral":
 
 elif pagina == "Agenda":
 
-    st.markdown(
-        '<div class="titulo">Agenda</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Agenda",
+        "Visualize todos os atendimentos do studio."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Visualize todos os atendimentos do studio.</div>',
-        unsafe_allow_html=True
+    agenda = garantir_colunas_agenda(
+        st.session_state.agenda
     )
-
-    agenda = st.session_state.agenda
 
     data_selecionada = st.date_input(
         "Escolha o dia",
         value=date(2026, 9, 11)
     )
 
-    agenda_dia = agenda[
-        agenda["Data"] == data_selecionada
-    ].sort_values("Horário")
-
-    valor_previsto = agenda_dia[
-        agenda_dia["Status"] != "Cancelado"
-    ]["Valor"].sum()
-
-    concluidos_dia = len(
-        agenda_dia[
-            agenda_dia["Status"] == "Concluído"
+    agenda_dia = (
+        agenda[
+            agenda["Data"] == data_selecionada
         ]
+        .sort_values("Horário")
+        .copy()
+    )
+
+    valor_previsto = (
+        agenda_dia[
+            agenda_dia["Status"]
+            != "Cancelado"
+        ]["Valor"].sum()
     )
 
     confirmados_dia = len(
         agenda_dia[
-            agenda_dia["Status"] == "Confirmado"
+            agenda_dia["Status"]
+            == "Confirmado"
         ]
     )
 
     pendentes_dia = len(
         agenda_dia[
-            agenda_dia["Status"] == "Pendente"
+            agenda_dia["Status"]
+            == "Pendente"
+        ]
+    )
+
+    concluidos_dia = len(
+        agenda_dia[
+            agenda_dia["Status"]
+            == "Concluído"
         ]
     )
 
@@ -1108,9 +1177,10 @@ elif pagina == "Agenda":
         dinheiro(valor_previsto)
     )
 
-    st.markdown(
-        f'<div class="section-title">{data_selecionada.strftime("%d/%m/%Y")}</div>',
-        unsafe_allow_html=True
+    secao(
+        data_selecionada.strftime(
+            "%d/%m/%Y"
+        )
     )
 
     if agenda_dia.empty:
@@ -1123,76 +1193,39 @@ elif pagina == "Agenda":
 
         for _, row in agenda_dia.iterrows():
 
-            if row["Status"] == "Confirmado":
+            with st.container(
+                border=True
+            ):
 
-                status_html = (
-                    '<span class="status-confirmado">'
-                    'Confirmado'
-                    '</span>'
+                col1, col2, col3 = st.columns(
+                    [1, 3, 1]
                 )
 
-            elif row["Status"] == "Pendente":
+                with col1:
 
-                status_html = (
-                    '<span class="status-pendente">'
-                    'Pendente'
-                    '</span>'
-                )
+                    st.markdown(
+                        f"### {row['Horário']}"
+                    )
 
-            elif row["Status"] == "Concluído":
+                with col2:
 
-                status_html = (
-                    '<span class="status-concluido">'
-                    'Concluído'
-                    '</span>'
-                )
+                    st.markdown(
+                        f"**{row['Cliente']}**"
+                    )
 
-            else:
+                    st.caption(
+                        f"{row['Serviço']} · "
+                        f"{dinheiro(row['Valor'])}"
+                    )
 
-                status_html = (
-                    '<span class="status-cancelado">'
-                    'Cancelado'
-                    '</span>'
-                )
+                with col3:
 
-            st.markdown(
-                f"""
-                <div class="agendamento">
+                    st.write(
+                        status_texto(
+                            row["Status"]
+                        )
+                    )
 
-                    <div style="
-                        display:flex;
-                        justify-content:space-between;
-                        align-items:center;
-                    ">
-
-                        <div>
-
-                            <div class="agendamento-hora">
-                                {row["Horário"]}
-                            </div>
-
-                            <div class="agendamento-cliente">
-                                {row["Cliente"]}
-                            </div>
-
-                            <div class="agendamento-servico">
-                                {row["Serviço"]}
-                                ·
-                                {dinheiro(row["Valor"])}
-                            </div>
-
-                        </div>
-
-                        <div>
-                            {status_html}
-                        </div>
-
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 # ============================================================
 # NOVO AGENDAMENTO
@@ -1200,14 +1233,9 @@ elif pagina == "Agenda":
 
 elif pagina == "Novo agendamento":
 
-    st.markdown(
-        '<div class="titulo">Novo agendamento</div>',
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        '<div class="subtitulo">Agende um novo atendimento para sua cliente.</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Novo agendamento",
+        "Agende um novo atendimento para sua cliente."
     )
 
     col1, col2 = st.columns(2)
@@ -1222,7 +1250,7 @@ elif pagina == "Novo agendamento":
             "WhatsApp"
         )
 
-        data = st.date_input(
+        data_agendamento = st.date_input(
             "Data",
             value=date(2026, 9, 15)
         )
@@ -1258,40 +1286,61 @@ elif pagina == "Novo agendamento":
             ]
         )
 
-    servico_info = st.session_state.servicos[
-        st.session_state.servicos["Serviço"] == servico
-    ]
+    servico_info = (
+        st.session_state.servicos[
+            st.session_state.servicos[
+                "Serviço"
+            ] == servico
+        ]
+    )
 
     if not servico_info.empty:
 
-        servico_info = servico_info.iloc[0]
-
-        st.markdown(
-            f"""
-            <div class="cliente-destaque">
-
-                <div class="card-title">
-                    Resumo do atendimento
-                </div>
-
-                <strong>{servico}</strong>
-
-                <br>
-
-                Duração aproximada:
-                {servico_info["Duração"]} minutos
-
-                <br>
-
-                Valor:
-                <strong>
-                    {dinheiro(servico_info["Preço"])}
-                </strong>
-
-            </div>
-            """,
-            unsafe_allow_html=True
+        servico_info = (
+            servico_info.iloc[0]
         )
+
+        with st.container(
+            border=True
+        ):
+
+            st.markdown(
+                "### Resumo do atendimento"
+            )
+
+            col1, col2, col3 = st.columns(3)
+
+            with col1:
+
+                st.write(
+                    "**Serviço**"
+                )
+
+                st.write(
+                    servico
+                )
+
+            with col2:
+
+                st.write(
+                    "**Duração**"
+                )
+
+                st.write(
+                    f"{servico_info['Duração']} minutos"
+                )
+
+            with col3:
+
+                st.write(
+                    "**Valor**"
+                )
+
+                st.write(
+                    dinheiro(
+                        servico_info["Preço"]
+                    )
+                )
 
     st.write("")
 
@@ -1309,21 +1358,28 @@ elif pagina == "Novo agendamento":
 
         else:
 
-            novo = pd.DataFrame([[
-                data,
-                horario,
-                nome.strip(),
-                servico,
-                float(servico_info["Preço"]),
-                status
-            ]], columns=[
-                "Data",
-                "Horário",
-                "Cliente",
-                "Serviço",
-                "Valor",
-                "Status"
-            ])
+            novo = pd.DataFrame(
+                [
+                    [
+                        data_agendamento,
+                        horario,
+                        nome.strip(),
+                        servico,
+                        float(
+                            servico_info["Preço"]
+                        ),
+                        status
+                    ]
+                ],
+                columns=[
+                    "Data",
+                    "Horário",
+                    "Cliente",
+                    "Serviço",
+                    "Valor",
+                    "Status"
+                ]
+            )
 
             st.session_state.agenda = pd.concat(
                 [
@@ -1333,37 +1389,55 @@ elif pagina == "Novo agendamento":
                 ignore_index=True
             )
 
-            clientes = st.session_state.clientes.copy()
+            clientes = (
+                garantir_colunas_clientes(
+                    st.session_state.clientes
+                )
+            )
 
-            if nome.strip() not in clientes[
-                "Cliente"
-            ].values:
+            cliente_existente = (
+                nome.strip()
+                in clientes["Cliente"].values
+            )
 
-                novo_cliente = pd.DataFrame([[
-                    nome.strip(),
-                    telefone,
-                    data.strftime("%d/%m/%Y"),
-                    0,
-                    0.00
-                ]], columns=[
-                    "Cliente",
-                    "Telefone",
-                    "Última Visita",
-                    "Visitas",
-                    "Total Gasto"
-                ])
+            if not cliente_existente:
 
-                st.session_state.clientes = pd.concat(
+                novo_cliente = pd.DataFrame(
                     [
-                        clientes,
-                        novo_cliente
+                        [
+                            nome.strip(),
+                            telefone,
+                            data_agendamento.strftime(
+                                "%d/%m/%Y"
+                            ),
+                            0,
+                            0.00
+                        ]
                     ],
-                    ignore_index=True
+                    columns=[
+                        "Cliente",
+                        "Telefone",
+                        "Última Visita",
+                        "Visitas",
+                        "Total Gasto"
+                    ]
+                )
+
+                st.session_state.clientes = (
+                    pd.concat(
+                        [
+                            clientes,
+                            novo_cliente
+                        ],
+                        ignore_index=True
+                    )
                 )
 
             st.success(
-                f"Agendamento de {nome.strip()} criado com sucesso."
+                f"Agendamento de "
+                f"{nome.strip()} criado com sucesso."
             )
+
 
 # ============================================================
 # CLIENTES
@@ -1371,53 +1445,20 @@ elif pagina == "Novo agendamento":
 
 elif pagina == "Clientes":
 
-    st.markdown(
-        '<div class="titulo">Clientes</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Clientes",
+        "Conheça melhor quem frequenta o Aura Beauty Studio."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Conheça melhor quem frequenta o Aura Beauty Studio.</div>',
-        unsafe_allow_html=True
+    clientes = garantir_colunas_clientes(
+        st.session_state.clientes
     )
-
-    clientes = st.session_state.clientes.copy()
-
-    # Garantia adicional contra KeyError
-    colunas_necessarias = [
-        "Cliente",
-        "Telefone",
-        "Última Visita",
-        "Visitas",
-        "Total Gasto"
-    ]
-
-    for coluna in colunas_necessarias:
-
-        if coluna not in clientes.columns:
-
-            if coluna == "Visitas":
-                clientes[coluna] = 0
-
-            elif coluna == "Total Gasto":
-                clientes[coluna] = 0.0
-
-            else:
-                clientes[coluna] = ""
-
-    clientes["Visitas"] = pd.to_numeric(
-        clientes["Visitas"],
-        errors="coerce"
-    ).fillna(0)
-
-    clientes["Total Gasto"] = pd.to_numeric(
-        clientes["Total Gasto"],
-        errors="coerce"
-    ).fillna(0)
 
     st.session_state.clientes = clientes
 
-    total_clientes = len(clientes)
+    total_clientes = len(
+        clientes
+    )
 
     clientes_recorrentes = len(
         clientes[
@@ -1427,7 +1468,7 @@ elif pagina == "Clientes":
 
     gasto_medio = (
         clientes["Total Gasto"].mean()
-        if len(clientes) > 0
+        if not clientes.empty
         else 0
     )
 
@@ -1448,23 +1489,29 @@ elif pagina == "Clientes":
         dinheiro(gasto_medio)
     )
 
-    st.markdown(
-        '<div class="section-title">Ranking de clientes</div>',
-        unsafe_allow_html=True
+    secao(
+        "Ranking de clientes"
     )
 
-    ranking = clientes.sort_values(
-        "Total Gasto",
-        ascending=False
-    ).copy()
+    ranking = (
+        clientes
+        .sort_values(
+            "Total Gasto",
+            ascending=False
+        )
+        .copy()
+    )
 
     ranking_exibicao = ranking.copy()
 
     ranking_exibicao[
         "Total Gasto"
-    ] = ranking_exibicao[
-        "Total Gasto"
-    ].apply(dinheiro)
+    ] = (
+        ranking_exibicao[
+            "Total Gasto"
+        ]
+        .apply(dinheiro)
+    )
 
     st.dataframe(
         ranking_exibicao,
@@ -1472,9 +1519,8 @@ elif pagina == "Clientes":
         hide_index=True
     )
 
-    st.markdown(
-        '<div class="section-title">Adicionar cliente</div>',
-        unsafe_allow_html=True
+    secao(
+        "Adicionar cliente"
     )
 
     c1, c2 = st.columns(2)
@@ -1504,9 +1550,10 @@ elif pagina == "Clientes":
                 "Informe o nome da cliente."
             )
 
-        elif novo_nome.strip() in clientes[
-            "Cliente"
-        ].values:
+        elif (
+            novo_nome.strip()
+            in clientes["Cliente"].values
+        ):
 
             st.warning(
                 "Essa cliente já está cadastrada."
@@ -1514,31 +1561,41 @@ elif pagina == "Clientes":
 
         else:
 
-            novo_cliente = pd.DataFrame([[
-                novo_nome.strip(),
-                novo_telefone,
-                date.today().strftime("%d/%m/%Y"),
-                0,
-                0.00
-            ]], columns=[
-                "Cliente",
-                "Telefone",
-                "Última Visita",
-                "Visitas",
-                "Total Gasto"
-            ])
-
-            st.session_state.clientes = pd.concat(
+            novo_cliente = pd.DataFrame(
                 [
-                    clientes,
-                    novo_cliente
+                    [
+                        novo_nome.strip(),
+                        novo_telefone,
+                        date.today().strftime(
+                            "%d/%m/%Y"
+                        ),
+                        0,
+                        0.00
+                    ]
                 ],
-                ignore_index=True
+                columns=[
+                    "Cliente",
+                    "Telefone",
+                    "Última Visita",
+                    "Visitas",
+                    "Total Gasto"
+                ]
+            )
+
+            st.session_state.clientes = (
+                pd.concat(
+                    [
+                        clientes,
+                        novo_cliente
+                    ],
+                    ignore_index=True
+                )
             )
 
             st.success(
                 "Cliente cadastrada com sucesso."
             )
+
 
 # ============================================================
 # SERVIÇOS
@@ -1546,31 +1603,32 @@ elif pagina == "Clientes":
 
 elif pagina == "Serviços":
 
-    st.markdown(
-        '<div class="titulo">Serviços</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Serviços",
+        "Catálogo de serviços oferecidos pelo Aura Beauty Studio."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Catálogo de serviços oferecidos pelo Aura Beauty Studio.</div>',
-        unsafe_allow_html=True
+    servicos = (
+        st.session_state.servicos
     )
 
-    servicos = st.session_state.servicos
-
-    categorias = servicos[
-        "Categoria"
-    ].unique()
+    categorias = (
+        servicos[
+            "Categoria"
+        ]
+        .dropna()
+        .unique()
+    )
 
     for categoria in categorias:
 
-        st.markdown(
-            f'<div class="section-title">{categoria}</div>',
-            unsafe_allow_html=True
+        secao(
+            categoria
         )
 
         dados = servicos[
-            servicos["Categoria"] == categoria
+            servicos["Categoria"]
+            == categoria
         ]
 
         colunas = st.columns(3)
@@ -1583,31 +1641,28 @@ elif pagina == "Serviços":
                 i % 3
             ]:
 
-                st.markdown(
-                    f"""
-                    <div class="servico-card">
+                with st.container(
+                    border=True
+                ):
 
-                        <div class="servico-cat">
-                            {row["Categoria"]}
-                        </div>
+                    st.caption(
+                        row["Categoria"]
+                        .upper()
+                    )
 
-                        <div class="servico-nome">
-                            {row["Serviço"]}
-                        </div>
+                    st.markdown(
+                        f"### {row['Serviço']}"
+                    )
 
-                        <div class="card-small">
-                            Aproximadamente
-                            {row["Duração"]} minutos
-                        </div>
+                    st.caption(
+                        f"Aproximadamente "
+                        f"{row['Duração']} minutos"
+                    )
 
-                        <div class="servico-preco">
-                            {dinheiro(row["Preço"])}
-                        </div>
+                    st.markdown(
+                        f"**{dinheiro(row['Preço'])}**"
+                    )
 
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
 
 # ============================================================
 # FINANCEIRO
@@ -1615,21 +1670,22 @@ elif pagina == "Serviços":
 
 elif pagina == "Financeiro":
 
-    st.markdown(
-        '<div class="titulo">Financeiro</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Financeiro",
+        "Acompanhe o faturamento e o desempenho financeiro do studio."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Acompanhe o faturamento e o desempenho financeiro do studio.</div>',
-        unsafe_allow_html=True
+    agenda = garantir_colunas_agenda(
+        st.session_state.agenda
     )
 
-    agenda = st.session_state.agenda
-
-    concluidos = agenda[
-        agenda["Status"] == "Concluído"
-    ].copy()
+    concluidos = (
+        agenda[
+            agenda["Status"]
+            == "Concluído"
+        ]
+        .copy()
+    )
 
     if concluidos.empty:
 
@@ -1639,9 +1695,13 @@ elif pagina == "Financeiro":
 
     else:
 
-        faturamento = concluidos["Valor"].sum()
+        faturamento = (
+            concluidos["Valor"].sum()
+        )
 
-        quantidade = len(concluidos)
+        quantidade = len(
+            concluidos
+        )
 
         ticket = (
             faturamento / quantidade
@@ -1680,17 +1740,22 @@ elif pagina == "Financeiro":
             )
         )
 
-        st.markdown(
-            '<div class="section-title">Faturamento por serviço</div>',
-            unsafe_allow_html=True
+        secao(
+            "Faturamento por serviço"
         )
 
         financeiro_servico = (
             concluidos
             .groupby("Serviço")
             .agg(
-                Atendimentos=("Serviço", "count"),
-                Faturamento=("Valor", "sum")
+                Atendimentos=(
+                    "Serviço",
+                    "count"
+                ),
+                Faturamento=(
+                    "Valor",
+                    "sum"
+                )
             )
             .sort_values(
                 "Faturamento",
@@ -1713,37 +1778,37 @@ elif pagina == "Financeiro":
 
         with col2:
 
-            tabela = financeiro_servico.copy()
+            tabela = (
+                financeiro_servico
+                .reset_index()
+                .copy()
+            )
 
-            tabela[
-                "Ticket Médio"
-            ] = (
+            tabela["Ticket Médio"] = (
                 tabela["Faturamento"]
                 /
                 tabela["Atendimentos"]
             )
 
-            tabela[
-                "Faturamento"
-            ] = tabela[
-                "Faturamento"
-            ].apply(dinheiro)
+            tabela["Faturamento"] = (
+                tabela["Faturamento"]
+                .apply(dinheiro)
+            )
 
-            tabela[
-                "Ticket Médio"
-            ] = tabela[
-                "Ticket Médio"
-            ].apply(dinheiro)
+            tabela["Ticket Médio"] = (
+                tabela["Ticket Médio"]
+                .apply(dinheiro)
+            )
 
             st.dataframe(
                 tabela,
                 use_container_width=True,
-                height=350
+                height=350,
+                hide_index=True
             )
 
-        st.markdown(
-            '<div class="section-title">Faturamento por dia</div>',
-            unsafe_allow_html=True
+        secao(
+            "Faturamento por dia"
         )
 
         por_dia = (
@@ -1758,16 +1823,18 @@ elif pagina == "Financeiro":
             height=300
         )
 
-        st.markdown(
-            '<div class="section-title">Participação por categoria</div>',
-            unsafe_allow_html=True
+        secao(
+            "Participação por categoria"
         )
 
         categorias_financeiro = (
             concluidos
             .merge(
                 st.session_state.servicos[
-                    ["Serviço", "Categoria"]
+                    [
+                        "Serviço",
+                        "Categoria"
+                    ]
                 ],
                 on="Serviço",
                 how="left"
@@ -1785,55 +1852,30 @@ elif pagina == "Financeiro":
         )
 
 
-
 # ============================================================
 # FIDELIZAÇÃO
 # ============================================================
 
 elif pagina == "Fidelização":
 
-    st.markdown(
-        '<div class="titulo">Fidelização</div>',
-        unsafe_allow_html=True
+    titulo_pagina(
+        "Fidelização",
+        "Entenda o comportamento das clientes e descubra oportunidades de relacionamento."
     )
 
-    st.markdown(
-        '<div class="subtitulo">Entenda o comportamento das clientes e descubra oportunidades de relacionamento.</div>',
-        unsafe_allow_html=True
+    agenda = (
+        garantir_colunas_agenda(
+            st.session_state.agenda
+        )
     )
 
-    agenda = st.session_state.agenda.copy()
-
-    # --------------------------------------------------------
-    # GARANTIA DAS COLUNAS DA AGENDA
-    # --------------------------------------------------------
-
-    colunas_agenda = [
-        "Data",
-        "Horário",
-        "Cliente",
-        "Serviço",
-        "Valor",
-        "Status"
-    ]
-
-    for coluna in colunas_agenda:
-
-        if coluna not in agenda.columns:
-
-            if coluna == "Valor":
-                agenda[coluna] = 0.0
-
-            else:
-                agenda[coluna] = ""
-
-    # --------------------------------------------------------
-    # ATENDIMENTOS CONCLUÍDOS
-    # --------------------------------------------------------
-
-    concluidos = agenda[
-        agenda["Status"] == "Concluído"
-    ].copy()
+    concluidos = (
+        agenda[
+            agenda["Status"]
+            == "Concluído"
+        ]
+        .copy()
+    )
 
     if concluidos.empty:
 
@@ -1843,21 +1885,18 @@ elif pagina == "Fidelização":
 
     else:
 
-        # ----------------------------------------------------
-        # GARANTE QUE VALOR SEJA NUMÉRICO
-        # ----------------------------------------------------
+        concluidos["Valor"] = (
+            pd.to_numeric(
+                concluidos["Valor"],
+                errors="coerce"
+            )
+            .fillna(0)
+        )
 
-        concluidos["Valor"] = pd.to_numeric(
-            concluidos["Valor"],
-            errors="coerce"
-        ).fillna(0)
-
-        # ----------------------------------------------------
-        # VISITAS POR CLIENTE
-        # ----------------------------------------------------
-
-        visitas = obter_visitas_cliente(
-            concluidos
+        visitas = (
+            obter_visitas_cliente(
+                concluidos
+            )
         )
 
         if visitas.empty:
@@ -1869,32 +1908,35 @@ elif pagina == "Fidelização":
         else:
 
             # ------------------------------------------------
-            # CLIENTE MAIS FREQUENTE
+            # INDICADORES
             # ------------------------------------------------
 
             cliente_mais_frequente = (
-                visitas["Visitas"]
+                visitas
                 .sort_values(
+                    [
+                        "Visitas",
+                        "Gasto"
+                    ],
                     ascending=False
                 )
-                .index[0]
+                .iloc[0]["Cliente"]
             )
-
-            # ------------------------------------------------
-            # CLIENTE COM MAIOR GASTO
-            # ------------------------------------------------
 
             cliente_maior_gasto = (
-                visitas["Gasto"]
+                visitas
                 .sort_values(
+                    "Gasto",
                     ascending=False
                 )
-                .index[0]
+                .iloc[0]["Cliente"]
             )
 
-            # ------------------------------------------------
-            # INDICADORES PRINCIPAIS
-            # ------------------------------------------------
+            clientes_recorrentes = len(
+                visitas[
+                    visitas["Visitas"] >= 3
+                ]
+            )
 
             c1, c2, c3 = st.columns(3)
 
@@ -1910,58 +1952,33 @@ elif pagina == "Fidelização":
 
             c3.metric(
                 "Clientes recorrentes",
-                len(
-                    visitas[
-                        visitas["Visitas"] >= 3
-                    ]
-                )
+                clientes_recorrentes
             )
 
-                        # ------------------------------------------------
+            # ------------------------------------------------
             # CLIENTES MAIS FIÉIS
             # ------------------------------------------------
 
-            st.markdown(
-                '<div class="section-title">Clientes mais fiéis</div>',
-                unsafe_allow_html=True
+            secao(
+                "Clientes mais fiéis"
             )
 
             ranking_visitas = (
                 visitas
                 .sort_values(
-                    ["Visitas", "Gasto"],
+                    [
+                        "Visitas",
+                        "Gasto"
+                    ],
                     ascending=False
                 )
                 .copy()
             )
 
-            # ------------------------------------------------
-            # TRANSFORMA O ÍNDICE EM COLUNA
-            # ------------------------------------------------
-
-            ranking_visitas = ranking_visitas.reset_index()
-
-            # Garante que a coluna do nome da cliente se chame Cliente
-            if "Cliente" not in ranking_visitas.columns:
-
-                ranking_visitas = ranking_visitas.rename(
-                    columns={
-                        ranking_visitas.columns[0]: "Cliente"
-                    }
-                )
-
-            # ------------------------------------------------
-            # FORMATA O VALOR GASTO
-            # ------------------------------------------------
-
             ranking_visitas["Gasto"] = (
                 ranking_visitas["Gasto"]
                 .apply(dinheiro)
             )
-
-            # ------------------------------------------------
-            # EXIBE A TABELA
-            # ------------------------------------------------
 
             st.dataframe(
                 ranking_visitas[
@@ -1974,23 +1991,68 @@ elif pagina == "Fidelização":
                 use_container_width=True,
                 hide_index=True
             )
+
+            # ------------------------------------------------
+            # FREQUÊNCIA DAS CLIENTES
+            # ------------------------------------------------
+
+            secao(
+                "Frequência das clientes"
+            )
+
+            frequencia = pd.cut(
+                visitas["Visitas"],
+                bins=[
+                    0,
+                    2,
+                    4,
+                    7,
+                    100
+                ],
+                labels=[
+                    "1–2 visitas",
+                    "3–4 visitas",
+                    "5–7 visitas",
+                    "8+ visitas"
+                ]
+            )
+
+            distribuicao = (
+                frequencia
+                .value_counts()
+                .sort_index()
+            )
+
+            st.bar_chart(
+                distribuicao,
+                height=300
+            )
+
             # ------------------------------------------------
             # SERVIÇOS POR CLIENTE
             # ------------------------------------------------
 
-            st.markdown(
-                '<div class="section-title">Serviços por cliente</div>',
-                unsafe_allow_html=True
+            secao(
+                "Serviços por cliente"
             )
 
             servicos_clientes = (
                 concluidos
                 .groupby(
-                    ["Cliente", "Serviço"]
+                    [
+                        "Cliente",
+                        "Serviço"
+                    ]
                 )
                 .agg(
-                    Atendimentos=("Serviço", "count"),
-                    Gasto=("Valor", "sum")
+                    Atendimentos=(
+                        "Serviço",
+                        "count"
+                    ),
+                    Gasto=(
+                        "Valor",
+                        "sum"
+                    )
                 )
                 .reset_index()
             )
@@ -2005,14 +2067,18 @@ elif pagina == "Fidelização":
 
             if clientes_disponiveis:
 
-                cliente_selecionado = st.selectbox(
-                    "Selecione uma cliente",
-                    clientes_disponiveis
+                cliente_selecionado = (
+                    st.selectbox(
+                        "Selecione uma cliente",
+                        clientes_disponiveis
+                    )
                 )
 
                 dados_cliente = (
                     servicos_clientes[
-                        servicos_clientes["Cliente"]
+                        servicos_clientes[
+                            "Cliente"
+                        ]
                         == cliente_selecionado
                     ]
                     .sort_values(
@@ -2037,54 +2103,25 @@ elif pagina == "Fidelização":
             # OPORTUNIDADES DE RELACIONAMENTO
             # ------------------------------------------------
 
-            st.markdown(
-                '<div class="section-title">Oportunidades de relacionamento</div>',
-                unsafe_allow_html=True
+            secao(
+                "Oportunidades de relacionamento"
             )
 
             clientes_inativos = (
-                st.session_state.clientes
-                .copy()
+                garantir_colunas_clientes(
+                    st.session_state.clientes
+                )
             )
 
-            # ------------------------------------------------
-            # GARANTE AS COLUNAS DOS CLIENTES
-            # ------------------------------------------------
-
-            colunas_clientes = [
-                "Cliente",
-                "Telefone",
-                "Última Visita",
-                "Visitas",
-                "Total Gasto"
-            ]
-
-            for coluna in colunas_clientes:
-
-                if coluna not in clientes_inativos.columns:
-
-                    if coluna == "Visitas":
-                        clientes_inativos[coluna] = 0
-
-                    elif coluna == "Total Gasto":
-                        clientes_inativos[coluna] = 0.0
-
-                    else:
-                        clientes_inativos[coluna] = ""
-
-            # ------------------------------------------------
-            # CONVERSÃO DA DATA DA ÚLTIMA VISITA
-            # ------------------------------------------------
-
-            clientes_inativos["Última"] = pd.to_datetime(
-                clientes_inativos["Última Visita"],
-                dayfirst=True,
-                errors="coerce"
+            clientes_inativos["Última"] = (
+                pd.to_datetime(
+                    clientes_inativos[
+                        "Última Visita"
+                    ],
+                    dayfirst=True,
+                    errors="coerce"
+                )
             )
-
-            # ------------------------------------------------
-            # DATA DE REFERÊNCIA DO DEMO
-            # ------------------------------------------------
 
             referencia = date(
                 2026,
@@ -2092,25 +2129,26 @@ elif pagina == "Fidelização":
                 11
             )
 
-            clientes_inativos["Dias sem visitar"] = (
+            clientes_inativos[
+                "Dias sem visitar"
+            ] = (
                 pd.Timestamp(
                     referencia
                 )
                 -
-                clientes_inativos["Última"]
+                clientes_inativos[
+                    "Última"
+                ]
             ).dt.days
 
-            # ------------------------------------------------
-            # CLIENTES QUE ESTÃO HÁ 7+ DIAS SEM VISITAR
-            # ------------------------------------------------
-
-            inativos = clientes_inativos[
-                clientes_inativos["Dias sem visitar"] >= 7
-            ].copy()
-
-            # ------------------------------------------------
-            # OPORTUNIDADE DE RETORNO
-            # ------------------------------------------------
+            inativos = (
+                clientes_inativos[
+                    clientes_inativos[
+                        "Dias sem visitar"
+                    ] >= 7
+                ]
+                .copy()
+            )
 
             if not inativos.empty:
 
@@ -2118,66 +2156,100 @@ elif pagina == "Fidelização":
                     inativos
                 )
 
-                st.markdown(
-                    "### Oportunidade de relacionamento"
-                )
-
-                st.markdown(
-                    f"**{quantidade_inativos} clientes** estão há pelo menos 7 dias sem visitar o studio."
+                st.warning(
+                    f"**{quantidade_inativos} clientes** "
+                    "estão há pelo menos 7 dias sem visitar o studio."
                 )
 
                 st.write(
-                    "Esse grupo pode receber uma mensagem de retorno pelo WhatsApp, "
-                    "uma condição especial ou uma sugestão de novo serviço."
+                    "Esse grupo pode receber uma mensagem "
+                    "de retorno pelo WhatsApp, uma condição "
+                    "especial ou uma sugestão de novo serviço."
+                )
+
+                tabela_inativos = (
+                    inativos[
+                        [
+                            "Cliente",
+                            "Telefone",
+                            "Última Visita",
+                            "Dias sem visitar"
+                        ]
+                    ]
+                    .sort_values(
+                        "Dias sem visitar",
+                        ascending=False
+                    )
+                )
+
+                st.dataframe(
+                    tabela_inativos,
+                    use_container_width=True,
+                    hide_index=True
                 )
 
             else:
 
-                st.markdown(
-                    "### Boa frequência"
-                )
-
-                st.write(
-                    "A maioria das clientes está mantendo uma boa frequência de visitas."
+                st.success(
+                    "A maioria das clientes está mantendo "
+                    "uma boa frequência de visitas."
                 )
 
             # ------------------------------------------------
             # ESTRATÉGIA DE FIDELIZAÇÃO
             # ------------------------------------------------
 
-            st.markdown(
-                "### Estratégia de fidelização"
+            secao(
+                "Estratégia de fidelização"
             )
 
             st.write(
-                "Clientes que já realizaram vários serviços podem receber "
-                "combinações personalizadas, como:"
+                "Clientes que já realizaram vários serviços "
+                "podem receber combinações personalizadas."
             )
 
-            st.markdown(
-                "**Unhas + sobrancelha**"
-            )
+            c1, c2 = st.columns(2)
 
-            st.markdown(
-                "ou"
-            )
+            with c1:
 
-            st.markdown(
-                "**Cílios + sobrancelha**"
-            )
+                with st.container(
+                    border=True
+                ):
+
+                    st.markdown(
+                        "### Unhas + sobrancelha"
+                    )
+
+                    st.caption(
+                        "Combinação indicada para aumentar "
+                        "o valor médio do atendimento."
+                    )
+
+            with c2:
+
+                with st.container(
+                    border=True
+                ):
+
+                    st.markdown(
+                        "### Cílios + sobrancelha"
+                    )
+
+                    st.caption(
+                        "Boa oportunidade para oferecer "
+                        "um segundo serviço."
+                    )
 
             # ------------------------------------------------
             # OPORTUNIDADE DE AUMENTO DE TICKET
             # ------------------------------------------------
 
-            st.markdown(
-                "### Oportunidade de aumento de ticket"
+            secao(
+                "Oportunidade de aumento de ticket"
             )
 
-            st.write(
-                "Identificar clientes que fazem apenas um serviço e apresentar "
-                "serviços complementares pode aumentar o valor médio de cada visita."
+            st.info(
+                "Identificar clientes que fazem apenas um "
+                "serviço e apresentar serviços complementares "
+                "pode aumentar o valor médio de cada visita."
             )
-
-
-
