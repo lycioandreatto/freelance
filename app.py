@@ -1288,64 +1288,60 @@ else:
 # MENU SUPERIOR
 # ============================================================
 
-topbar_col1, topbar_col2 = st.columns(
-    [1.1, 5]
-)
+st.markdown(
+    """
+    <div class="topbar">
+        <div class="topbar-inner">
 
-with topbar_col1:
+            <div class="topbar-brand">
 
-    st.markdown(
-        """
-        <div class="topbar">
-            <div class="topbar-inner">
-                <div class="topbar-brand">
-                    <div class="topbar-logo">
-                        A
+                <div class="topbar-logo">
+                    A
+                </div>
+
+                <div>
+                    <div class="topbar-brand-name">
+                        Aura
                     </div>
 
-                    <div>
-                        <div class="topbar-brand-name">
-                            Aura
-                        </div>
-
-                        <div class="topbar-brand-subtitle">
-                            Beauty Studio
-                        </div>
+                    <div class="topbar-brand-subtitle">
+                        Beauty Studio
                     </div>
                 </div>
+
             </div>
+
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-with topbar_col2:
+st.markdown(
+    '<div class="topbar-nav">',
+    unsafe_allow_html=True
+)
 
-    st.markdown(
-        '<div class="topbar-nav">',
-        unsafe_allow_html=True
-    )
+pagina = st.radio(
+    "Navegação",
+    [
+        "⌂  Visão geral",
+        "▣  Agenda",
+        "＋  Novo agendamento",
+        "♡  Clientes",
+        "✦  Serviços",
+        "R$  Financeiro",
+        "↗  Gastos",
+        "♧  Fidelização"
+    ],
+    horizontal=True,
+    label_visibility="collapsed"
+)
 
-    pagina = st.radio(
-        "Navegação",
-        [
-            "⌂  Visão geral",
-            "▣  Agenda",
-            "＋  Novo agendamento",
-            "♡  Clientes",
-            "✦  Serviços",
-            "R$  Financeiro",
-            "↗  Gastos",
-            "♧  Fidelização"
-        ],
-        horizontal=True,
-        label_visibility="collapsed"
-    )
-
-    st.markdown(
-        '</div>',
-        unsafe_allow_html=True
-    )
+st.markdown(
+    '</div>',
+    unsafe_allow_html=True
+)
 
 pagina = (
     pagina
