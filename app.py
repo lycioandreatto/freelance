@@ -27,17 +27,29 @@ st.markdown(
     @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap');
 
     :root {
-        --orange: #F05A28;
-        --orange-dark: #D94718;
-        --cream: #FFF9F5;
-        --background: #F7F4F2;
+        --orange: #E85D2A;
+        --orange-dark: #C9471C;
+        --cream: #FFF8F3;
+        --background: #F5F3F1;
         --white: #FFFFFF;
         --text: #292624;
-        --muted: #817873;
-        --border: #EDE5E0;
-        --soft-orange: #FFF0E9;
-        --green: #3E8B68;
+        --muted: #89817C;
+        --border: #E8E2DE;
+        --soft-orange: #FFF0E8;
+        --green: #3F8A68;
+        --soft-green: #EDF7F1;
+        --red: #C95555;
+        --soft-red: #FCEEEE;
+        --yellow: #C58A28;
+        --soft-yellow: #FFF7E7;
+        --purple: #7565A8;
+        --soft-purple: #F1EFF8;
     }
+
+
+    /* ========================================================
+       BASE
+       ======================================================== */
 
     .stApp {
         background: var(--background);
@@ -45,14 +57,131 @@ st.markdown(
         font-family: 'DM Sans', sans-serif;
     }
 
+    .main .block-container {
+        max-width: 1450px;
+        padding-top: 42px;
+        padding-bottom: 60px;
+        padding-left: 55px;
+        padding-right: 55px;
+    }
+
+    [data-testid="stHeader"] {
+        background: transparent;
+    }
+
+    #MainMenu {
+        visibility: hidden;
+    }
+
+    footer {
+        visibility: hidden;
+    }
+
+
+    /* ========================================================
+       SIDEBAR
+       ======================================================== */
+
     section[data-testid="stSidebar"] {
         background: #211F1E;
-        border-right: 0;
+        border-right: 1px solid #302D2B;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        padding: 32px 20px 24px 20px;
     }
 
     section[data-testid="stSidebar"] * {
-        color: #F9F4F1 !important;
+        font-family: 'DM Sans', sans-serif;
     }
+
+    section[data-testid="stSidebar"] .brand-title {
+        font-family: 'Playfair Display', serif !important;
+        font-size: 29px;
+        font-weight: 500;
+        color: #FFFFFF !important;
+        letter-spacing: -0.5px;
+        margin-bottom: 1px;
+    }
+
+    section[data-testid="stSidebar"] .brand-subtitle {
+        color: #AFA7A2 !important;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-label {
+        color: #77706C !important;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.8px;
+        text-transform: uppercase;
+        margin-top: 30px;
+        margin-bottom: 8px;
+    }
+
+    section[data-testid="stSidebar"] .stRadio > label {
+        display: none;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] {
+        gap: 5px;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label {
+        border-radius: 11px;
+        padding: 11px 13px;
+        color: #CFC8C4 !important;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
+        background: #2D2927;
+        color: #FFFFFF !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] {
+        background: rgba(232, 93, 42, 0.15);
+        border: 1px solid rgba(232, 93, 42, 0.25);
+        color: #FFFFFF !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"]::before {
+        background: var(--orange);
+    }
+
+    section[data-testid="stSidebar"] hr {
+        border-color: #36312F;
+        margin: 25px 0;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-footer {
+        background: #292624;
+        border: 1px solid #373230;
+        border-radius: 13px;
+        padding: 13px 14px;
+        margin-top: 20px;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-footer-title {
+        color: #FFFFFF !important;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    section[data-testid="stSidebar"] .sidebar-footer-text {
+        color: #8F8782 !important;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+
+    /* ========================================================
+       TIPOGRAFIA
+       ======================================================== */
 
     h1,
     h2,
@@ -60,27 +189,29 @@ st.markdown(
         font-family: 'Playfair Display', serif !important;
         font-weight: 500 !important;
         color: var(--text);
+        letter-spacing: -0.4px;
     }
 
-    section[data-testid="stSidebar"] .stRadio label {
-        padding: 8px 10px;
-        border-radius: 10px;
+    h1 {
+        font-size: 39px !important;
+        line-height: 1.15 !important;
     }
 
-    div[data-testid="stMetric"] {
-        background: #FFFFFF;
-        border: 1px solid var(--border);
-        padding: 15px;
-        border-radius: 15px;
+    h2 {
+        font-size: 30px !important;
     }
 
-    div[data-testid="stMetricValue"] {
+    h3 {
+        font-size: 21px !important;
+    }
+
+    p {
         font-family: 'DM Sans', sans-serif;
     }
 
     .main-title {
         font-family: 'Playfair Display', serif;
-        font-size: 39px;
+        font-size: 42px;
         line-height: 1.1;
         color: var(--text);
         margin-bottom: 5px;
@@ -95,25 +226,223 @@ st.markdown(
     .section-title {
         font-family: 'Playfair Display', serif;
         font-size: 25px;
-        margin-top: 25px;
-        margin-bottom: 15px;
+        margin-top: 32px;
+        margin-bottom: 16px;
         color: var(--text);
     }
 
-    .brand {
-        font-family: 'Playfair Display', serif;
-        font-size: 29px;
-        color: #FFFFFF;
-        margin-bottom: 2px;
+    .eyebrow {
+        color: var(--orange);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 7px;
     }
 
-    .brand-sub {
-        font-size: 10px;
-        color: #BDB3AE !important;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
+    .page-heading {
+        font-family: 'Playfair Display', serif;
+        font-size: 37px;
+        line-height: 1.15;
+        color: var(--text);
+        margin-bottom: 5px;
+    }
+
+    .page-description {
+        color: var(--muted);
+        font-size: 13px;
+        margin-bottom: 28px;
+    }
+
+
+    /* ========================================================
+       CABEÇALHOS
+       ======================================================== */
+
+    .custom-page-header {
         margin-bottom: 30px;
     }
+
+    .welcome-header {
+        margin-bottom: 30px;
+    }
+
+    .welcome-header .eyebrow {
+        margin-bottom: 8px;
+    }
+
+    .welcome-header .welcome-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 40px;
+        line-height: 1.1;
+        color: var(--text);
+        margin-bottom: 7px;
+    }
+
+    .welcome-header .welcome-description {
+        color: var(--muted);
+        font-size: 14px;
+    }
+
+
+    /* ========================================================
+       CARDS / MÉTRICAS
+       ======================================================== */
+
+    div[data-testid="stMetric"] {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 19px 20px 17px 20px;
+        min-height: 112px;
+        box-shadow: 0 2px 8px rgba(45, 37, 32, 0.025);
+    }
+
+    div[data-testid="stMetric"]:hover {
+        border-color: #DDD3CD;
+        box-shadow: 0 5px 18px rgba(45, 37, 32, 0.055);
+    }
+
+    div[data-testid="stMetricLabel"] {
+        color: var(--muted) !important;
+        font-size: 11px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    div[data-testid="stMetricValue"] {
+        color: var(--text) !important;
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 28px !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.7px;
+        margin-top: 4px;
+    }
+
+    div[data-testid="stMetricDelta"] {
+        font-size: 11px !important;
+    }
+
+
+    /* ========================================================
+       CONTAINERS
+       ======================================================== */
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: var(--white);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 2px 8px rgba(45, 37, 32, 0.025);
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+        border-color: #DDD5D0;
+    }
+
+
+    /* ========================================================
+       BOTÕES
+       ======================================================== */
+
+    .stButton > button {
+        border-radius: 10px !important;
+        border: 1px solid var(--border) !important;
+        min-height: 42px;
+        font-family: 'DM Sans', sans-serif !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+        transition: all 0.2s ease;
+    }
+
+    .stButton > button:hover {
+        border-color: var(--orange) !important;
+        color: var(--orange) !important;
+    }
+
+    .stButton > button[kind="primary"] {
+        background: var(--orange) !important;
+        border-color: var(--orange) !important;
+        color: #FFFFFF !important;
+    }
+
+    .stButton > button[kind="primary"]:hover {
+        background: var(--orange-dark) !important;
+        border-color: var(--orange-dark) !important;
+        color: #FFFFFF !important;
+    }
+
+
+    /* ========================================================
+       INPUTS
+       ======================================================== */
+
+    div[data-baseweb="input"] {
+        border-radius: 9px;
+    }
+
+    div[data-baseweb="input"] > div {
+        border-color: var(--border);
+        background: #FFFFFF;
+    }
+
+    div[data-baseweb="input"] > div:focus-within {
+        border-color: var(--orange);
+        box-shadow: 0 0 0 1px var(--orange);
+    }
+
+    div[data-baseweb="select"] > div {
+        border-radius: 9px;
+        border-color: var(--border);
+    }
+
+    div[data-baseweb="select"] > div:focus-within {
+        border-color: var(--orange);
+        box-shadow: 0 0 0 1px var(--orange);
+    }
+
+    label[data-testid="stWidgetLabel"] p {
+        color: #625A56 !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+    }
+
+
+    /* ========================================================
+       DATAFRAMES / TABELAS
+       ======================================================== */
+
+    div[data-testid="stDataFrame"] {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+
+    /* ========================================================
+       ALERTAS
+       ======================================================== */
+
+    div[data-testid="stAlert"] {
+        border-radius: 11px;
+        border-width: 1px;
+        font-size: 13px;
+    }
+
+
+    /* ========================================================
+       GRÁFICOS
+       ======================================================== */
+
+    div[data-testid="stVegaLiteChart"],
+    div[data-testid="stArrowVegaLiteChart"] {
+        background: transparent;
+    }
+
+
+    /* ========================================================
+       ELEMENTOS AUXILIARES
+       ======================================================== */
 
     .small-muted {
         color: var(--muted);
@@ -121,36 +450,43 @@ st.markdown(
     }
 
     .orange-box {
-        background: var(--orange);
+        background: linear-gradient(
+            135deg,
+            #E85D2A 0%,
+            #D94D20 100%
+        );
         color: white;
-        border-radius: 16px;
-        padding: 20px;
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 8px 22px rgba(232, 93, 42, 0.16);
     }
 
     .orange-box-title {
-        font-size: 11px;
+        font-size: 10px;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1.2px;
-        color: white;
+        letter-spacing: 1.5px;
+        color: rgba(255,255,255,0.75);
         margin-bottom: 8px;
     }
 
     .orange-box-value {
-        font-size: 27px;
+        font-size: 28px;
         font-weight: 600;
         color: white;
     }
 
     .orange-box-small {
         font-size: 12px;
-        color: white;
+        color: rgba(255,255,255,0.82);
         margin-top: 5px;
     }
 
     .insight-box {
         background: var(--soft-orange);
-        border-left: 4px solid var(--orange);
-        border-radius: 10px;
+        border: 1px solid #F7D8C9;
+        border-left: 3px solid var(--orange);
+        border-radius: 11px;
         padding: 14px 16px;
         margin-bottom: 10px;
     }
@@ -164,6 +500,7 @@ st.markdown(
     .service-category {
         color: var(--orange);
         font-size: 10px;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.2px;
         margin-bottom: 8px;
@@ -175,8 +512,58 @@ st.markdown(
         margin-top: 10px;
     }
 
-    button {
-        border-radius: 10px !important;
+    .agenda-time {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .agenda-client {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .agenda-service {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 3px;
+    }
+
+    .status-pill {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-confirmado {
+        background: var(--soft-green);
+        color: var(--green);
+    }
+
+    .status-pendente {
+        background: var(--soft-yellow);
+        color: var(--yellow);
+    }
+
+    .status-concluido {
+        background: var(--soft-purple);
+        color: var(--purple);
+    }
+
+    .status-cancelado {
+        background: var(--soft-red);
+        color: var(--red);
+    }
+
+    .section-divider {
+        height: 1px;
+        background: var(--border);
+        margin: 28px 0;
     }
 
     </style>
@@ -484,18 +871,26 @@ def saudacao():
 def titulo_pagina(titulo, subtitulo):
 
     st.markdown(
-        f"## {titulo}"
-    )
-
-    st.caption(
-        subtitulo
+        f"""
+        <div class="custom-page-header">
+            <div class="eyebrow">AURA BEAUTY STUDIO</div>
+            <div class="page-heading">{titulo}</div>
+            <div class="page-description">{subtitulo}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
 def secao(titulo):
 
     st.markdown(
-        f"### {titulo}"
+        f"""
+        <div class="section-title">
+            {titulo}
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
@@ -823,38 +1218,67 @@ else:
 with st.sidebar:
 
     st.markdown(
-        "### Aura Beauty"
+        """
+        <div class="brand-title">
+            Aura
+        </div>
+
+        <div class="brand-subtitle">
+            Beauty Studio
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-    st.caption(
-        "BEAUTY STUDIO"
+    st.markdown(
+        '<div class="sidebar-label">Menu</div>',
+        unsafe_allow_html=True
     )
-
-    st.write("")
 
     pagina = st.radio(
         "Navegação",
         [
-            "Visão geral",
-            "Agenda",
-            "Novo agendamento",
-            "Clientes",
-            "Serviços",
-            "Financeiro",
-            "Gastos",
-            "Fidelização"
+            "⌂  Visão geral",
+            "▣  Agenda",
+            "＋  Novo agendamento",
+            "♡  Clientes",
+            "✦  Serviços",
+            "R$  Financeiro",
+            "↗  Gastos",
+            "♧  Fidelização"
         ],
         label_visibility="collapsed"
     )
 
-    st.divider()
-
-    st.caption(
-        "Aura Beauty Studio"
+    pagina = (
+        pagina
+        .replace("⌂  ", "")
+        .replace("▣  ", "")
+        .replace("＋  ", "")
+        .replace("♡  ", "")
+        .replace("✦  ", "")
+        .replace("R$  ", "")
+        .replace("↗  ", "")
+        .replace("♧  ", "")
     )
 
-    st.caption(
-        "Gestão inteligente do seu studio"
+    st.markdown(
+        '<div class="sidebar-label">Gestão</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        """
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-title">
+                Aura Beauty Studio
+            </div>
+            <div class="sidebar-footer-text">
+                Gestão inteligente do seu studio
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 
@@ -865,11 +1289,18 @@ with st.sidebar:
 if pagina == "Visão geral":
 
     st.markdown(
-        f"# {saudacao()}, Lilly."
-    )
-
-    st.caption(
-        "Aqui está um resumo do desempenho do seu studio."
+        f"""
+        <div class="welcome-header">
+            <div class="eyebrow">DASHBOARD</div>
+            <div class="welcome-title">
+                {saudacao()}, Lilly.
+            </div>
+            <div class="welcome-description">
+                Aqui está um resumo do desempenho do seu studio.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
     agenda = garantir_colunas_agenda(
@@ -988,18 +1419,26 @@ if pagina == "Visão geral":
                     with horario_col:
 
                         st.markdown(
-                            f"### {row['Horário']}"
+                            f"""
+                            <div class="agenda-time">
+                                {row['Horário']}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
                         )
 
                     with dados_col:
 
                         st.markdown(
-                            f"**{row['Cliente']}**"
-                        )
-
-                        st.caption(
-                            f"{row['Serviço']} · "
-                            f"{dinheiro(row['Valor'])}"
+                            f"""
+                            <div class="agenda-client">
+                                {row['Cliente']}
+                            </div>
+                            <div class="agenda-service">
+                                {row['Serviço']} · {dinheiro(row['Valor'])}
+                            </div>
+                            """,
+                            unsafe_allow_html=True
                         )
 
                     with status_col:
@@ -1333,18 +1772,26 @@ elif pagina == "Agenda":
                 with col1:
 
                     st.markdown(
-                        f"### {row['Horário']}"
+                        f"""
+                        <div class="agenda-time">
+                            {row['Horário']}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
                     )
 
                 with col2:
 
                     st.markdown(
-                        f"**{row['Cliente']}**"
-                    )
-
-                    st.caption(
-                        f"{row['Serviço']} · "
-                        f"{dinheiro(row['Valor'])}"
+                        f"""
+                        <div class="agenda-client">
+                            {row['Cliente']}
+                        </div>
+                        <div class="agenda-service">
+                            {row['Serviço']} · {dinheiro(row['Valor'])}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
                     )
 
                 with col3:
@@ -1774,22 +2221,25 @@ elif pagina == "Serviços":
                     border=True
                 ):
 
-                    st.caption(
-                        row["Categoria"]
-                        .upper()
-                    )
-
                     st.markdown(
-                        f"### {row['Serviço']}"
-                    )
+                        f"""
+                        <div class="service-category">
+                            {row['Categoria'].upper()}
+                        </div>
 
-                    st.caption(
-                        f"Aproximadamente "
-                        f"{row['Duração']} minutos"
-                    )
+                        <div class="service-name">
+                            {row['Serviço']}
+                        </div>
 
-                    st.markdown(
-                        f"**{dinheiro(row['Preço'])}**"
+                        <div class="small-muted">
+                            Aproximadamente {row['Duração']} minutos
+                        </div>
+
+                        <div class="service-price">
+                            {dinheiro(row['Preço'])}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
                     )
 
 
