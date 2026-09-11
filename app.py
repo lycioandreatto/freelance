@@ -165,47 +165,45 @@ st.markdown(
     }
 
 
-    /* Área do menu horizontal */
+        /* ========================================================
+       MENU HORIZONTAL
+       ======================================================== */
 
     div[data-testid="stHorizontalBlock"] {
         gap: 0.8rem;
     }
 
-    .topbar-nav {
-        width: 100%;
+    div[data-testid="stRadio"] {
+        margin: 0 !important;
     }
 
-    .topbar-nav div[data-testid="stRadio"] {
-        margin: 0;
+    div[data-testid="stRadio"] > label {
+        display: none !important;
     }
 
-    .topbar-nav div[data-testid="stRadio"] > label {
-        display: none;
-    }
-
-    .topbar-nav div[role="radiogroup"] {
-        display: flex;
+    div[data-testid="stRadio"] div[role="radiogroup"] {
+        display: flex !important;
         justify-content: flex-end;
         align-items: center;
-        gap: 4px;
-
+        gap: 5px;
         flex-wrap: nowrap;
     }
 
-    .topbar-nav div[role="radiogroup"] > label {
+    div[data-testid="stRadio"] div[role="radiogroup"] > label {
         min-height: 40px;
 
-        padding: 0 11px;
+        padding: 0 13px !important;
 
-        border-radius: 10px;
-        border: 1px solid transparent;
+        border-radius: 11px !important;
+        border: 1px solid transparent !important;
 
-        display: flex;
+        display: flex !important;
         align-items: center;
+        justify-content: center;
 
         cursor: pointer;
 
-        color: #756D68 !important;
+        background: transparent !important;
 
         transition:
             background 0.18s ease,
@@ -214,7 +212,7 @@ st.markdown(
             transform 0.18s ease;
     }
 
-    .topbar-nav div[role="radiogroup"] > label p {
+    div[data-testid="stRadio"] div[role="radiogroup"] > label p {
         margin: 0 !important;
 
         color: #756D68 !important;
@@ -226,31 +224,32 @@ st.markdown(
         white-space: nowrap;
     }
 
-    .topbar-nav div[role="radiogroup"] > label:hover {
-        background: #FAF7F5;
-        border-color: #EEE7E3;
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:hover {
+        background: #FAF3EF !important;
+        border-color: #F3DED4 !important;
 
         transform: translateY(-1px);
     }
 
-    .topbar-nav div[role="radiogroup"] > label:hover p {
+    div[data-testid="stRadio"] div[role="radiogroup"] > label:hover p {
         color: var(--orange) !important;
     }
 
-    .topbar-nav div[role="radiogroup"] > label[data-checked="true"] {
-        background: var(--soft-orange);
-        border-color: #F5D5C5;
+    div[data-testid="stRadio"] div[role="radiogroup"] > label[data-checked="true"] {
+        background: var(--soft-orange) !important;
+        border-color: #F2D1C1 !important;
+
+        box-shadow: 0 3px 10px rgba(217, 111, 72, 0.08);
     }
 
-    .topbar-nav div[role="radiogroup"] > label[data-checked="true"] p {
+    div[data-testid="stRadio"] div[role="radiogroup"] > label[data-checked="true"] p {
         color: var(--orange) !important;
         font-weight: 700 !important;
     }
 
-    .topbar-nav div[role="radiogroup"] > label > div:first-child {
-        display: none;
+    div[data-testid="stRadio"] div[role="radiogroup"] > label > div:first-child {
+        display: none !important;
     }
-
 
     /* ========================================================
        TIPOGRAFIA
