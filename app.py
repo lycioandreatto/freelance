@@ -1917,7 +1917,7 @@ elif pagina == "Fidelização":
                 )
             )
 
-            # ------------------------------------------------
+                        # ------------------------------------------------
             # CLIENTES MAIS FIÉIS
             # ------------------------------------------------
 
@@ -1935,54 +1935,45 @@ elif pagina == "Fidelização":
                 .copy()
             )
 
+            # ------------------------------------------------
+            # TRANSFORMA O ÍNDICE EM COLUNA
+            # ------------------------------------------------
+
+            ranking_visitas = ranking_visitas.reset_index()
+
+            # Garante que a coluna do nome da cliente se chame Cliente
+            if "Cliente" not in ranking_visitas.columns:
+
+                ranking_visitas = ranking_visitas.rename(
+                    columns={
+                        ranking_visitas.columns[0]: "Cliente"
+                    }
+                )
+
+            # ------------------------------------------------
+            # FORMATA O VALOR GASTO
+            # ------------------------------------------------
+
             ranking_visitas["Gasto"] = (
                 ranking_visitas["Gasto"]
                 .apply(dinheiro)
             )
 
+            # ------------------------------------------------
+            # EXIBE A TABELA
+            # ------------------------------------------------
+
             st.dataframe(
-                ranking_visitas,
+                ranking_visitas[
+                    [
+                        "Cliente",
+                        "Visitas",
+                        "Gasto"
+                    ]
+                ],
                 use_container_width=True,
                 hide_index=True
             )
-
-            # ------------------------------------------------
-            # FREQUÊNCIA DAS CLIENTES
-            # ------------------------------------------------
-
-            st.markdown(
-                '<div class="section-title">Frequência das clientes</div>',
-                unsafe_allow_html=True
-            )
-
-            frequencia = pd.cut(
-                visitas["Visitas"],
-                bins=[
-                    0,
-                    2,
-                    4,
-                    7,
-                    100
-                ],
-                labels=[
-                    "1–2 visitas",
-                    "3–4 visitas",
-                    "5–7 visitas",
-                    "8+ visitas"
-                ]
-            )
-
-            distribuicao = (
-                frequencia
-                .value_counts()
-                .sort_index()
-            )
-
-            st.bar_chart(
-                distribuicao,
-                height=300
-            )
-
             # ------------------------------------------------
             # SERVIÇOS POR CLIENTE
             # ------------------------------------------------
