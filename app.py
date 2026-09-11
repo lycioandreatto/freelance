@@ -12,7 +12,7 @@ st.set_page_config(
     page_title="Aura Beauty Studio",
     page_icon="✦",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 
@@ -59,7 +59,7 @@ st.markdown(
 
     .main .block-container {
         max-width: 1450px;
-        padding-top: 42px;
+        padding-top: 125px;
         padding-bottom: 60px;
         padding-left: 55px;
         padding-right: 55px;
@@ -77,136 +77,178 @@ st.markdown(
         visibility: hidden;
     }
 
-
-       /* ========================================================
-       SIDEBAR
-       ======================================================== */
-
     section[data-testid="stSidebar"] {
-        background: #211F1E;
-        border-right: 1px solid #302D2B;
-    }
-
-    section[data-testid="stSidebar"] > div {
-        padding: 32px 20px 24px 20px;
-    }
-
-    section[data-testid="stSidebar"] * {
-        font-family: 'DM Sans', sans-serif;
-    }
-
-    section[data-testid="stSidebar"] .brand-title {
-        font-family: 'Playfair Display', serif !important;
-        font-size: 29px;
-        font-weight: 500;
-        color: var(--orange) !important;
-        letter-spacing: -0.5px;
-        margin-bottom: 1px;
-    }
-
-    section[data-testid="stSidebar"] .brand-subtitle {
-        color: #AFA7A2 !important;
-        font-size: 9px;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-    }
-
-    section[data-testid="stSidebar"] .sidebar-label {
-        color: #77706C !important;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        margin-top: 30px;
-        margin-bottom: 8px;
-    }
-
-    section[data-testid="stSidebar"] .stRadio > label {
         display: none;
     }
 
-    section[data-testid="stSidebar"] div[role="radiogroup"] {
-        gap: 5px;
+
+    /* ========================================================
+       MENU SUPERIOR - SAAS
+       ======================================================== */
+
+    .topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999999;
+
+        height: 76px;
+
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        border-bottom: 1px solid var(--border);
+
+        box-shadow:
+            0 4px 18px rgba(45, 37, 32, 0.045);
     }
 
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label {
+    .topbar-inner {
+        max-width: 1450px;
+        height: 76px;
+        margin: 0 auto;
+
+        padding: 0 30px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .topbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 210px;
+    }
+
+    .topbar-logo {
+        width: 39px;
+        height: 39px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
         border-radius: 11px;
-        padding: 11px 13px;
-        color: #CFC8C4 !important;
-        background: transparent;
-        border: 1px solid transparent;
-        transition:
-            background 0.2s ease,
-            color 0.2s ease,
-            border-color 0.2s ease;
-    }
 
-    /* Ícones das opções */
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label p {
-        color: #CFC8C4 !important;
-    }
+        background: var(--soft-orange);
+        color: var(--orange);
 
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label p::first-letter {
-        color: var(--orange) !important;
-    }
-
-    /* Hover */
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
-        background: #2D2927;
-        border-color: #393431;
-        color: #FFFFFF !important;
-    }
-
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover p {
-        color: #FFFFFF !important;
-    }
-
-    /* Opção selecionada */
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] {
-        background: rgba(232, 93, 42, 0.14);
-        border: 1px solid rgba(232, 93, 42, 0.28);
-        color: var(--orange) !important;
-    }
-
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p {
-        color: var(--orange) !important;
-        font-weight: 600 !important;
-    }
-
-    /* Bolinha do radio */
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[role="radio"] {
-        border-color: var(--orange) !important;
-        background: var(--orange) !important;
-    }
-
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[role="radio"]::after {
-        background: #211F1E !important;
-    }
-
-    section[data-testid="stSidebar"] hr {
-        border-color: #36312F;
-        margin: 25px 0;
-    }
-
-    section[data-testid="stSidebar"] .sidebar-footer {
-        background: #292624;
-        border: 1px solid #373230;
-        border-radius: 13px;
-        padding: 13px 14px;
-        margin-top: 20px;
-    }
-
-    section[data-testid="stSidebar"] .sidebar-footer-title {
-        color: #FFFFFF !important;
-        font-size: 12px;
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
         font-weight: 600;
+
+        border: 1px solid #F6D9CB;
     }
 
-    section[data-testid="stSidebar"] .sidebar-footer-text {
-        color: #8F8782 !important;
-        font-size: 10px;
-        margin-top: 3px;
+    .topbar-brand-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 22px;
+        font-weight: 500;
+        color: var(--text);
+        line-height: 1;
+    }
+
+    .topbar-brand-subtitle {
+        margin-top: 4px;
+
+        color: var(--muted);
+
+        font-size: 8px;
+        font-weight: 700;
+
+        letter-spacing: 2.1px;
+        text-transform: uppercase;
+    }
+
+
+    /* Área do menu horizontal */
+
+    div[data-testid="stHorizontalBlock"] {
+        gap: 0.8rem;
+    }
+
+    .topbar-nav {
+        width: 100%;
+    }
+
+    .topbar-nav div[data-testid="stRadio"] {
+        margin: 0;
+    }
+
+    .topbar-nav div[data-testid="stRadio"] > label {
+        display: none;
+    }
+
+    .topbar-nav div[role="radiogroup"] {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 4px;
+
+        flex-wrap: nowrap;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label {
+        min-height: 40px;
+
+        padding: 0 11px;
+
+        border-radius: 10px;
+        border: 1px solid transparent;
+
+        display: flex;
+        align-items: center;
+
+        cursor: pointer;
+
+        color: #756D68 !important;
+
+        transition:
+            background 0.18s ease,
+            color 0.18s ease,
+            border-color 0.18s ease,
+            transform 0.18s ease;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label p {
+        margin: 0 !important;
+
+        color: #756D68 !important;
+
+        font-family: 'DM Sans', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+
+        white-space: nowrap;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label:hover {
+        background: #FAF7F5;
+        border-color: #EEE7E3;
+
+        transform: translateY(-1px);
+    }
+
+    .topbar-nav div[role="radiogroup"] > label:hover p {
+        color: var(--orange) !important;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label[data-checked="true"] {
+        background: var(--soft-orange);
+        border-color: #F5D5C5;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label[data-checked="true"] p {
+        color: var(--orange) !important;
+        font-weight: 700 !important;
+    }
+
+    .topbar-nav div[role="radiogroup"] > label > div:first-child {
+        display: none;
     }
 
 
@@ -1243,26 +1285,44 @@ else:
 
 
 # ============================================================
-# SIDEBAR
+# MENU SUPERIOR
 # ============================================================
 
-with st.sidebar:
+topbar_col1, topbar_col2 = st.columns(
+    [1.1, 5]
+)
+
+with topbar_col1:
 
     st.markdown(
         """
-        <div class="brand-title">
-            Aura
-        </div>
+        <div class="topbar">
+            <div class="topbar-inner">
+                <div class="topbar-brand">
+                    <div class="topbar-logo">
+                        A
+                    </div>
 
-        <div class="brand-subtitle">
-            Beauty Studio
+                    <div>
+                        <div class="topbar-brand-name">
+                            Aura
+                        </div>
+
+                        <div class="topbar-brand-subtitle">
+                            Beauty Studio
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
+with topbar_col2:
+
     st.markdown(
-        '<div class="sidebar-label">Menu</div>',
+        '<div class="topbar-nav">',
         unsafe_allow_html=True
     )
 
@@ -1278,39 +1338,26 @@ with st.sidebar:
             "↗  Gastos",
             "♧  Fidelização"
         ],
+        horizontal=True,
         label_visibility="collapsed"
     )
 
-    pagina = (
-        pagina
-        .replace("⌂  ", "")
-        .replace("▣  ", "")
-        .replace("＋  ", "")
-        .replace("♡  ", "")
-        .replace("✦  ", "")
-        .replace("R$  ", "")
-        .replace("↗  ", "")
-        .replace("♧  ", "")
-    )
-
     st.markdown(
-        '<div class="sidebar-label">Gestão</div>',
+        '</div>',
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
-        <div class="sidebar-footer">
-            <div class="sidebar-footer-title">
-                Aura Beauty Studio
-            </div>
-            <div class="sidebar-footer-text">
-                Gestão inteligente do seu studio
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+pagina = (
+    pagina
+    .replace("⌂  ", "")
+    .replace("▣  ", "")
+    .replace("＋  ", "")
+    .replace("♡  ", "")
+    .replace("✦  ", "")
+    .replace("R$  ", "")
+    .replace("↗  ", "")
+    .replace("♧  ", "")
+)
 
 
 # ============================================================
