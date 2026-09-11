@@ -1785,6 +1785,7 @@ elif pagina == "Financeiro":
         )
 
 
+
 # ============================================================
 # FIDELIZAÇÃO
 # ============================================================
@@ -1941,7 +1942,8 @@ elif pagina == "Fidelização":
 
             st.dataframe(
                 ranking_visitas,
-                use_container_width=True
+                use_container_width=True,
+                hide_index=True
             )
 
             # ------------------------------------------------
@@ -2070,11 +2072,11 @@ elif pagina == "Fidelização":
 
                 if coluna not in clientes_inativos.columns:
 
-                    if coluna in [
-                        "Visitas",
-                        "Total Gasto"
-                    ]:
+                    if coluna == "Visitas":
                         clientes_inativos[coluna] = 0
+
+                    elif coluna == "Total Gasto":
+                        clientes_inativos[coluna] = 0.0
 
                     else:
                         clientes_inativos[coluna] = ""
@@ -2126,55 +2128,26 @@ elif pagina == "Fidelização":
                 )
 
                 st.markdown(
-                    f"""
-                    <div class="insight">
+                    "### Oportunidade de relacionamento"
+                )
 
-                        <div style="
-                            font-size: 16px;
-                            font-weight: 600;
-                            margin-bottom: 8px;
-                        ">
-                            Oportunidade de relacionamento
-                        </div>
+                st.markdown(
+                    f"**{quantidade_inativos} clientes** estão há pelo menos 7 dias sem visitar o studio."
+                )
 
-                        <div>
-                            <strong>{quantidade_inativos} clientes</strong>
-                            estão há pelo menos 7 dias sem visitar o studio.
-                        </div>
-
-                        <div style="margin-top: 12px;">
-                            Esse grupo pode receber uma mensagem de retorno
-                            pelo WhatsApp, uma condição especial ou uma
-                            sugestão de novo serviço.
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                st.write(
+                    "Esse grupo pode receber uma mensagem de retorno pelo WhatsApp, "
+                    "uma condição especial ou uma sugestão de novo serviço."
                 )
 
             else:
 
                 st.markdown(
-                    """
-                    <div class="insight">
+                    "### Boa frequência"
+                )
 
-                        <div style="
-                            font-size: 16px;
-                            font-weight: 600;
-                            margin-bottom: 8px;
-                        ">
-                            Boa frequência
-                        </div>
-
-                        <div>
-                            A maioria das clientes está mantendo
-                            uma boa frequência de visitas.
-                        </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True
+                st.write(
+                    "A maioria das clientes está mantendo uma boa frequência de visitas."
                 )
 
             # ------------------------------------------------
@@ -2182,38 +2155,24 @@ elif pagina == "Fidelização":
             # ------------------------------------------------
 
             st.markdown(
-                """
-                <div class="insight">
+                "### Estratégia de fidelização"
+            )
 
-                    <div style="
-                        font-size: 16px;
-                        font-weight: 600;
-                        margin-bottom: 8px;
-                    ">
-                        Estratégia de fidelização
-                    </div>
+            st.write(
+                "Clientes que já realizaram vários serviços podem receber "
+                "combinações personalizadas, como:"
+            )
 
-                    <div>
-                        Clientes que já realizaram vários serviços
-                        podem receber combinações personalizadas,
-                        como:
-                    </div>
+            st.markdown(
+                "**Unhas + sobrancelha**"
+            )
 
-                    <div style="margin-top: 10px;">
-                        <strong>Unhas + sobrancelha</strong>
-                    </div>
+            st.markdown(
+                "ou"
+            )
 
-                    <div style="margin-top: 5px;">
-                        ou
-                    </div>
-
-                    <div style="margin-top: 5px;">
-                        <strong>Cílios + sobrancelha</strong>
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
+            st.markdown(
+                "**Cílios + sobrancelha**"
             )
 
             # ------------------------------------------------
@@ -2221,26 +2180,13 @@ elif pagina == "Fidelização":
             # ------------------------------------------------
 
             st.markdown(
-                """
-                <div class="insight">
-
-                    <div style="
-                        font-size: 16px;
-                        font-weight: 600;
-                        margin-bottom: 8px;
-                    ">
-                        Oportunidade de aumento de ticket
-                    </div>
-
-                    <div>
-                        Identificar clientes que fazem apenas um
-                        serviço e apresentar serviços complementares
-                        pode aumentar o valor médio de cada visita.
-                    </div>
-
-                </div>
-                """,
-                unsafe_allow_html=True
+                "### Oportunidade de aumento de ticket"
             )
+
+            st.write(
+                "Identificar clientes que fazem apenas um serviço e apresentar "
+                "serviços complementares pode aumentar o valor médio de cada visita."
+            )
+
 
 
