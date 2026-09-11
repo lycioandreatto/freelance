@@ -78,7 +78,7 @@ st.markdown(
     }
 
 
-    /* ========================================================
+       /* ========================================================
        SIDEBAR
        ======================================================== */
 
@@ -99,7 +99,7 @@ st.markdown(
         font-family: 'Playfair Display', serif !important;
         font-size: 29px;
         font-weight: 500;
-        color: #FFFFFF !important;
+        color: var(--orange) !important;
         letter-spacing: -0.5px;
         margin-bottom: 1px;
     }
@@ -134,23 +134,54 @@ st.markdown(
         border-radius: 11px;
         padding: 11px 13px;
         color: #CFC8C4 !important;
-        transition: all 0.2s ease;
+        background: transparent;
         border: 1px solid transparent;
+        transition:
+            background 0.2s ease,
+            color 0.2s ease,
+            border-color 0.2s ease;
     }
 
+    /* Ícones das opções */
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label p {
+        color: #CFC8C4 !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label p::first-letter {
+        color: var(--orange) !important;
+    }
+
+    /* Hover */
     section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
         background: #2D2927;
+        border-color: #393431;
         color: #FFFFFF !important;
     }
 
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover p {
+        color: #FFFFFF !important;
+    }
+
+    /* Opção selecionada */
     section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] {
-        background: rgba(232, 93, 42, 0.15);
-        border: 1px solid rgba(232, 93, 42, 0.25);
-        color: #FFFFFF !important;
+        background: rgba(232, 93, 42, 0.14);
+        border: 1px solid rgba(232, 93, 42, 0.28);
+        color: var(--orange) !important;
     }
 
-    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"]::before {
-        background: var(--orange);
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] p {
+        color: var(--orange) !important;
+        font-weight: 600 !important;
+    }
+
+    /* Bolinha do radio */
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[role="radio"] {
+        border-color: var(--orange) !important;
+        background: var(--orange) !important;
+    }
+
+    section[data-testid="stSidebar"] div[role="radiogroup"] > label[data-checked="true"] div[role="radio"]::after {
+        background: #211F1E !important;
     }
 
     section[data-testid="stSidebar"] hr {
