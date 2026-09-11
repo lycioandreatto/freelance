@@ -1,7 +1,7 @@
+```python
 import streamlit as st
 import pandas as pd
-from datetime import datetime, date
-import random
+from datetime import date
 
 # =========================================================
 # CONFIGURAÇÃO
@@ -72,6 +72,27 @@ st.markdown("""
         color: #F2660D;
     }
 
+    .positivo {
+        color: #1E9E5A;
+        font-weight: 700;
+    }
+
+    .alerta {
+        color: #D94A00;
+        font-weight: 700;
+    }
+
+    .insight {
+        background: white;
+        padding: 18px;
+        border-radius: 14px;
+        border-left: 5px solid #F2660D;
+        border-top: 1px solid #E7E8EA;
+        border-right: 1px solid #E7E8EA;
+        border-bottom: 1px solid #E7E8EA;
+        margin-bottom: 10px;
+    }
+
     .mesa-livre {
         background: white;
         border: 2px solid #E7E8EA;
@@ -86,14 +107,6 @@ st.markdown("""
         border-radius: 14px;
         padding: 18px;
         text-align: center;
-    }
-
-    .produto-card {
-        background: white;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid #E7E8EA;
-        margin-bottom: 10px;
     }
 
     div.stButton > button {
@@ -148,6 +161,112 @@ CLIENTES_INICIAIS.columns = [
 
 
 # =========================================================
+# VENDAS INICIAIS COM PRODUTOS
+# =========================================================
+
+VENDAS_INICIAIS = pd.DataFrame([
+    [
+        "09/09/2026",
+        "Mesa 01",
+        "Carlos Henrique",
+        86.00,
+        "Pix",
+        [
+            {"produto": "Espetinho de Carne", "quantidade": 3},
+            {"produto": "Itaipava 600ml", "quantidade": 4},
+            {"produto": "Pão de Alho", "quantidade": 2},
+        ]
+    ],
+    [
+        "09/09/2026",
+        "Mesa 03",
+        "Mariana Souza",
+        72.00,
+        "Cartão",
+        [
+            {"produto": "Espetinho de Frango", "quantidade": 4},
+            {"produto": "Medalhão de Carne", "quantidade": 1},
+            {"produto": "Coca-Cola Lata", "quantidade": 2},
+        ]
+    ],
+    [
+        "09/09/2026",
+        "Mesa 05",
+        "João Pedro",
+        124.00,
+        "Pix",
+        [
+            {"produto": "Espetinho de Carne", "quantidade": 5},
+            {"produto": "Espetinho de Frango", "quantidade": 3},
+            {"produto": "Itaipava 600ml", "quantidade": 5},
+        ]
+    ],
+    [
+        "09/09/2026",
+        "Mesa 07",
+        "Ana Paula",
+        58.00,
+        "Dinheiro",
+        [
+            {"produto": "Medalhão de Frango", "quantidade": 2},
+            {"produto": "Pão de Alho", "quantidade": 2},
+            {"produto": "Guaraná Lata", "quantidade": 2},
+        ]
+    ],
+    [
+        "09/09/2026",
+        "Mesa 02",
+        "Rafael Santos",
+        94.00,
+        "Pix",
+        [
+            {"produto": "Espetinho Misto", "quantidade": 4},
+            {"produto": "Queijo Coalho", "quantidade": 2},
+            {"produto": "Brahma 600ml", "quantidade": 3},
+        ]
+    ],
+    [
+        "08/09/2026",
+        "Mesa 04",
+        "Lucas Oliveira",
+        68.00,
+        "Cartão",
+        [
+            {"produto": "Espetinho de Carne", "quantidade": 3},
+            {"produto": "Espetinho de Coração", "quantidade": 2},
+            {"produto": "Coca-Cola Lata", "quantidade": 2},
+        ]
+    ],
+    [
+        "08/09/2026",
+        "Mesa 06",
+        "Carlos Henrique",
+        112.00,
+        "Pix",
+        [
+            {"produto": "Espetinho de Carne", "quantidade": 4},
+            {"produto": "Medalhão de Carne", "quantidade": 2},
+            {"produto": "Itaipava 600ml", "quantidade": 5},
+        ]
+    ],
+    [
+        "08/09/2026",
+        "Mesa 01",
+        "Mariana Souza",
+        79.00,
+        "Dinheiro",
+        [
+            {"produto": "Espetinho de Frango", "quantidade": 3},
+            {"produto": "Linguiça Toscana", "quantidade": 2},
+            {"produto": "Brahma 600ml", "quantidade": 3},
+        ]
+    ],
+], columns=[
+    "Data", "Mesa", "Cliente", "Valor", "Pagamento", "Itens"
+])
+
+
+# =========================================================
 # ESTADO DA APLICAÇÃO
 # =========================================================
 
@@ -167,19 +286,7 @@ if "carrinho" not in st.session_state:
     st.session_state.carrinho = []
 
 if "vendas" not in st.session_state:
-
-    st.session_state.vendas = pd.DataFrame([
-        ["09/09/2026", "Mesa 01", "Carlos Henrique", 86.00, "Pix"],
-        ["09/09/2026", "Mesa 03", "Mariana Souza", 72.00, "Cartão"],
-        ["09/09/2026", "Mesa 05", "João Pedro", 124.00, "Pix"],
-        ["09/09/2026", "Mesa 07", "Ana Paula", 58.00, "Dinheiro"],
-        ["09/09/2026", "Mesa 02", "Rafael Santos", 94.00, "Pix"],
-        ["08/09/2026", "Mesa 04", "Lucas Oliveira", 68.00, "Cartão"],
-        ["08/09/2026", "Mesa 06", "Carlos Henrique", 112.00, "Pix"],
-        ["08/09/2026", "Mesa 01", "Mariana Souza", 79.00, "Dinheiro"],
-    ], columns=[
-        "Data", "Mesa", "Cliente", "Valor", "Pagamento"
-    ])
+    st.session_state.vendas = VENDAS_INICIAIS.copy()
 
 
 # =========================================================
@@ -187,7 +294,12 @@ if "vendas" not in st.session_state:
 # =========================================================
 
 def dinheiro(valor):
-    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    return (
+        f"R$ {valor:,.2f}"
+        .replace(",", "X")
+        .replace(".", ",")
+        .replace("X", ".")
+    )
 
 
 def total_carrinho():
@@ -198,15 +310,19 @@ def total_carrinho():
 
 
 def adicionar_produto(produto):
+
     encontrado = False
 
     for item in st.session_state.carrinho:
+
         if item["id"] == produto["ID"]:
+
             item["quantidade"] += 1
             encontrado = True
             break
 
     if not encontrado:
+
         st.session_state.carrinho.append({
             "id": produto["ID"],
             "produto": produto["Produto"],
@@ -216,6 +332,7 @@ def adicionar_produto(produto):
 
 
 def remover_produto(index):
+
     if 0 <= index < len(st.session_state.carrinho):
         st.session_state.carrinho.pop(index)
 
@@ -227,33 +344,107 @@ def finalizar_pedido(mesa, cliente, pagamento):
 
     total = total_carrinho()
 
+    itens = []
+
+    for item in st.session_state.carrinho:
+
+        itens.append({
+            "produto": item["produto"],
+            "quantidade": item["quantidade"]
+        })
+
     nova_venda = pd.DataFrame([[
         date.today().strftime("%d/%m/%Y"),
         f"Mesa {mesa:02d}",
         cliente if cliente else "Consumidor",
         total,
-        pagamento
+        pagamento,
+        itens
     ]], columns=[
-        "Data", "Mesa", "Cliente", "Valor", "Pagamento"
+        "Data",
+        "Mesa",
+        "Cliente",
+        "Valor",
+        "Pagamento",
+        "Itens"
     ])
 
     st.session_state.vendas = pd.concat(
-        [st.session_state.vendas, nova_venda],
+        [
+            st.session_state.vendas,
+            nova_venda
+        ],
         ignore_index=True
     )
 
     for item in st.session_state.carrinho:
 
-        mask = st.session_state.produtos["ID"] == item["id"]
+        mask = (
+            st.session_state.produtos["ID"]
+            == item["id"]
+        )
 
         st.session_state.produtos.loc[
             mask,
             "Estoque"
         ] -= item["quantidade"]
 
+    # Atualiza cliente existente
+    if cliente:
+
+        mask_cliente = (
+            st.session_state.clientes["Cliente"]
+            .str.lower()
+            == cliente.lower()
+        )
+
+        if mask_cliente.any():
+
+            st.session_state.clientes.loc[
+                mask_cliente,
+                "Pedidos"
+            ] += 1
+
+            st.session_state.clientes.loc[
+                mask_cliente,
+                "Total Gasto"
+            ] += total
+
+            st.session_state.clientes.loc[
+                mask_cliente,
+                "Última Compra"
+            ] = date.today().strftime("%d/%m/%Y")
+
     st.session_state.carrinho = []
 
     return True
+
+
+def produtos_vendidos(vendas):
+
+    registros = []
+
+    for _, venda in vendas.iterrows():
+
+        itens = venda["Itens"]
+
+        if not isinstance(itens, list):
+            continue
+
+        for item in itens:
+
+            registros.append({
+                "Produto": item["produto"],
+                "Quantidade": item["quantidade"]
+            })
+
+    if not registros:
+
+        return pd.DataFrame(
+            columns=["Produto", "Quantidade"]
+        )
+
+    return pd.DataFrame(registros)
 
 
 # =========================================================
@@ -267,6 +458,7 @@ st.sidebar.markdown(
         padding:10px 0 25px 0;
     ">
         <div style="font-size:38px;">🍢</div>
+
         <div style="
             font-size:22px;
             font-weight:800;
@@ -274,6 +466,7 @@ st.sidebar.markdown(
         ">
             GELADA EXPRESS
         </div>
+
         <div style="
             font-size:12px;
             color:#F2660D;
@@ -286,6 +479,7 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+
 pagina = st.sidebar.radio(
     "MENU",
     [
@@ -297,6 +491,7 @@ pagina = st.sidebar.radio(
         "Vendas"
     ]
 )
+
 
 st.sidebar.divider()
 
@@ -317,15 +512,101 @@ if pagina == "Dashboard":
     )
 
     st.markdown(
-        '<div class="subtitulo">Visão geral do movimento da GELADA EXPRESS</div>',
+        '<div class="subtitulo">'
+        'Visão gerencial da GELADA EXPRESS'
+        '</div>',
         unsafe_allow_html=True
     )
 
-    vendas = st.session_state.vendas
+    vendas = st.session_state.vendas.copy()
 
-    faturamento = vendas["Valor"].sum()
-    pedidos = len(vendas)
-    ticket = faturamento / pedidos if pedidos else 0
+    vendas["DataConvertida"] = pd.to_datetime(
+        vendas["Data"],
+        dayfirst=True
+    )
+
+    # -----------------------------------------------------
+    # FILTRO DE PERÍODO
+    # -----------------------------------------------------
+
+    col_filtro, col_info = st.columns([1, 3])
+
+    with col_filtro:
+
+        periodo = st.selectbox(
+            "Período",
+            [
+                "Todo o período",
+                "Hoje",
+                "Últimos 7 dias",
+                "Últimos 30 dias"
+            ]
+        )
+
+    hoje = pd.Timestamp.today().normalize()
+
+    if periodo == "Hoje":
+
+        vendas_filtradas = vendas[
+            vendas["DataConvertida"] == hoje
+        ]
+
+    elif periodo == "Últimos 7 dias":
+
+        inicio = hoje - pd.Timedelta(days=6)
+
+        vendas_filtradas = vendas[
+            vendas["DataConvertida"] >= inicio
+        ]
+
+    elif periodo == "Últimos 30 dias":
+
+        inicio = hoje - pd.Timedelta(days=29)
+
+        vendas_filtradas = vendas[
+            vendas["DataConvertida"] >= inicio
+        ]
+
+    else:
+
+        vendas_filtradas = vendas.copy()
+
+    with col_info:
+
+        if len(vendas_filtradas) > 0:
+
+            primeira_data = vendas_filtradas[
+                "DataConvertida"
+            ].min()
+
+            ultima_data = vendas_filtradas[
+                "DataConvertida"
+            ].max()
+
+            st.caption(
+                f"Período analisado: "
+                f"{primeira_data.strftime('%d/%m/%Y')} "
+                f"até "
+                f"{ultima_data.strftime('%d/%m/%Y')}"
+            )
+
+    # -----------------------------------------------------
+    # INDICADORES
+    # -----------------------------------------------------
+
+    faturamento = vendas_filtradas["Valor"].sum()
+
+    pedidos = len(vendas_filtradas)
+
+    ticket = (
+        faturamento / pedidos
+        if pedidos
+        else 0
+    )
+
+    clientes_ativos = vendas_filtradas[
+        vendas_filtradas["Cliente"] != "Consumidor"
+    ]["Cliente"].nunique()
 
     produtos_estoque_baixo = len(
         st.session_state.produtos[
@@ -337,44 +618,68 @@ if pagina == "Dashboard":
     c1, c2, c3, c4 = st.columns(4)
 
     with c1:
+
         st.markdown(
             f"""
             <div class="card">
-                <div class="card-titulo">FATURAMENTO</div>
-                <div class="card-valor">{dinheiro(faturamento)}</div>
+                <div class="card-titulo">
+                    FATURAMENTO
+                </div>
+
+                <div class="card-valor">
+                    {dinheiro(faturamento)}
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     with c2:
+
         st.markdown(
             f"""
             <div class="card">
-                <div class="card-titulo">PEDIDOS</div>
-                <div class="card-valor">{pedidos}</div>
+                <div class="card-titulo">
+                    PEDIDOS
+                </div>
+
+                <div class="card-valor">
+                    {pedidos}
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     with c3:
+
         st.markdown(
             f"""
             <div class="card">
-                <div class="card-titulo">TICKET MÉDIO</div>
-                <div class="card-valor">{dinheiro(ticket)}</div>
+                <div class="card-titulo">
+                    TICKET MÉDIO
+                </div>
+
+                <div class="card-valor">
+                    {dinheiro(ticket)}
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     with c4:
+
         st.markdown(
             f"""
             <div class="card">
-                <div class="card-titulo">ESTOQUE BAIXO</div>
-                <div class="card-valor destaque">{produtos_estoque_baixo}</div>
+                <div class="card-titulo">
+                    CLIENTES
+                </div>
+
+                <div class="card-valor">
+                    {clientes_ativos}
+                </div>
             </div>
             """,
             unsafe_allow_html=True
@@ -382,76 +687,405 @@ if pagina == "Dashboard":
 
     st.write("")
 
-    col1, col2 = st.columns([1.5, 1])
+    # -----------------------------------------------------
+    # EVOLUÇÃO DO FATURAMENTO
+    # -----------------------------------------------------
 
-    with col1:
+    st.subheader("Evolução do faturamento")
 
-        st.subheader("Faturamento por dia")
-
-        vendas_chart = vendas.copy()
-
-        vendas_chart["Data"] = pd.to_datetime(
-            vendas_chart["Data"],
-            dayfirst=True
-        )
+    if not vendas_filtradas.empty:
 
         diario = (
-            vendas_chart
-            .groupby("Data")["Valor"]
+            vendas_filtradas
+            .groupby("DataConvertida")["Valor"]
             .sum()
             .sort_index()
         )
 
-        st.line_chart(diario)
-
-    with col2:
-
-        st.subheader("Formas de pagamento")
-
-        pagamentos = (
-            vendas
-            .groupby("Pagamento")["Valor"]
-            .sum()
-            .sort_values(ascending=False)
+        st.line_chart(
+            diario,
+            height=300
         )
 
-        st.bar_chart(pagamentos)
+    else:
 
-    st.divider()
+        st.info(
+            "Não existem vendas no período selecionado."
+        )
+
+    # -----------------------------------------------------
+    # PAGAMENTO + PRODUTOS
+    # -----------------------------------------------------
 
     col1, col2 = st.columns(2)
 
     with col1:
 
-        st.subheader("Produtos em destaque")
+        st.subheader("Faturamento por pagamento")
 
-        produtos_demo = pd.DataFrame([
-            ["Espetinho de Carne", 87],
-            ["Espetinho de Frango", 74],
-            ["Itaipava 600ml", 61],
-            ["Medalhão de Carne", 48],
-            ["Coca-Cola Lata", 44],
-        ], columns=["Produto", "Quantidade"])
-
-        st.bar_chart(
-            produtos_demo.set_index("Produto")
+        pagamentos = (
+            vendas_filtradas
+            .groupby("Pagamento")["Valor"]
+            .sum()
+            .sort_values(ascending=False)
         )
+
+        if not pagamentos.empty:
+
+            st.bar_chart(
+                pagamentos,
+                height=280
+            )
+
+        else:
+
+            st.info("Sem dados.")
 
     with col2:
 
-        st.subheader("Clientes mais assíduos")
+        st.subheader("Produtos mais vendidos")
 
-        clientes = st.session_state.clientes.copy()
-
-        clientes = clientes.sort_values(
-            "Pedidos",
-            ascending=False
+        produtos_venda = produtos_vendidos(
+            vendas_filtradas
         )
 
-        st.dataframe(
-            clientes.head(5),
-            use_container_width=True,
-            hide_index=True
+        if not produtos_venda.empty:
+
+            ranking_produtos = (
+                produtos_venda
+                .groupby("Produto")["Quantidade"]
+                .sum()
+                .sort_values(ascending=False)
+                .head(8)
+            )
+
+            st.bar_chart(
+                ranking_produtos,
+                height=280
+            )
+
+        else:
+
+            st.info("Sem produtos registrados.")
+
+    st.divider()
+
+    # -----------------------------------------------------
+    # ANÁLISE DE PRODUTOS
+    # -----------------------------------------------------
+
+    st.subheader("Desempenho dos produtos")
+
+    produtos_venda = produtos_vendidos(
+        vendas_filtradas
+    )
+
+    if not produtos_venda.empty:
+
+        ranking = (
+            produtos_venda
+            .groupby("Produto")["Quantidade"]
+            .sum()
+            .sort_values(ascending=False)
+        )
+
+        total_unidades = ranking.sum()
+
+        col1, col2, col3 = st.columns(3)
+
+        with col1:
+
+            produto_top = ranking.index[0]
+
+            qtd_top = ranking.iloc[0]
+
+            st.markdown(
+                f"""
+                <div class="card">
+                    <div class="card-titulo">
+                        PRODUTO MAIS VENDIDO
+                    </div>
+
+                    <div class="card-valor destaque">
+                        {produto_top}
+                    </div>
+
+                    <div style="color:#777D85;">
+                        {qtd_top} unidades
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with col2:
+
+            participacao = (
+                ranking.iloc[0]
+                / total_unidades
+                * 100
+            )
+
+            st.markdown(
+                f"""
+                <div class="card">
+                    <div class="card-titulo">
+                        PARTICIPAÇÃO DO LÍDER
+                    </div>
+
+                    <div class="card-valor">
+                        {participacao:.1f}%
+                    </div>
+
+                    <div style="color:#777D85;">
+                        das unidades vendidas
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with col3:
+
+            produto_menor = ranking.index[-1]
+
+            st.markdown(
+                f"""
+                <div class="card">
+                    <div class="card-titulo">
+                        MENOR SAÍDA
+                    </div>
+
+                    <div class="card-valor">
+                        {produto_menor}
+                    </div>
+
+                    <div style="color:#777D85;">
+                        {ranking.iloc[-1]} unidades
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    # -----------------------------------------------------
+    # CLIENTES
+    # -----------------------------------------------------
+
+    st.divider()
+
+    col1, col2 = st.columns([1.2, 1])
+
+    with col1:
+
+        st.subheader("Clientes que mais compram")
+
+        clientes_periodo = (
+            vendas_filtradas[
+                vendas_filtradas["Cliente"] != "Consumidor"
+            ]
+            .groupby("Cliente")
+            .agg(
+                Pedidos=("Valor", "count"),
+                Total=("Valor", "sum")
+            )
+            .sort_values(
+                "Total",
+                ascending=False
+            )
+            .head(8)
+        )
+
+        if not clientes_periodo.empty:
+
+            clientes_exibicao = clientes_periodo.copy()
+
+            clientes_exibicao["Total"] = (
+                clientes_exibicao["Total"]
+                .apply(dinheiro)
+            )
+
+            st.dataframe(
+                clientes_exibicao,
+                use_container_width=True
+            )
+
+        else:
+
+            st.info(
+                "Ainda não há clientes identificados."
+            )
+
+    with col2:
+
+        st.subheader("Participação dos pagamentos")
+
+        if not pagamentos.empty:
+
+            total_pagamentos = pagamentos.sum()
+
+            for pagamento, valor in pagamentos.items():
+
+                percentual = (
+                    valor
+                    / total_pagamentos
+                    * 100
+                )
+
+                st.write(
+                    f"**{pagamento}** — "
+                    f"{dinheiro(valor)} "
+                    f"({percentual:.1f}%)"
+                )
+
+                st.progress(
+                    min(percentual / 100, 1)
+                )
+
+    # -----------------------------------------------------
+    # ESTOQUE
+    # -----------------------------------------------------
+
+    st.divider()
+
+    st.subheader("Alertas operacionais")
+
+    estoque = st.session_state.produtos.copy()
+
+    estoque_baixo = estoque[
+        estoque["Estoque"]
+        <= estoque["Estoque Mínimo"]
+    ].copy()
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        if not estoque_baixo.empty:
+
+            st.warning(
+                f"{len(estoque_baixo)} produto(s) "
+                f"estão no limite de estoque."
+            )
+
+            for _, produto in estoque_baixo.iterrows():
+
+                st.write(
+                    f"🔴 **{produto['Produto']}** — "
+                    f"{produto['Estoque']} unidades "
+                    f"(mínimo {produto['Estoque Mínimo']})"
+                )
+
+        else:
+
+            st.success(
+                "Nenhum produto está abaixo do estoque mínimo."
+            )
+
+    with col2:
+
+        if not ranking.empty:
+
+            top3 = ranking.head(3)
+
+            st.markdown(
+                "**Produtos com maior saída:**"
+            )
+
+            for i, (produto, quantidade) in enumerate(
+                top3.items(),
+                start=1
+            ):
+
+                st.write(
+                    f"{i}. **{produto}** — "
+                    f"{quantidade} unidades"
+                )
+
+    # -----------------------------------------------------
+    # INSIGHTS AUTOMÁTICOS
+    # -----------------------------------------------------
+
+    st.divider()
+
+    st.subheader("💡 Insights do negócio")
+
+    insights = []
+
+    if not vendas_filtradas.empty:
+
+        if faturamento > 0:
+
+            insights.append(
+                f"**Faturamento:** o período analisado "
+                f"gerou **{dinheiro(faturamento)}** "
+                f"em {pedidos} pedido(s)."
+            )
+
+        if ticket > 0:
+
+            insights.append(
+                f"**Ticket médio:** cada pedido movimentou "
+                f"em média **{dinheiro(ticket)}**."
+            )
+
+        if not pagamentos.empty:
+
+            pagamento_lider = pagamentos.index[0]
+
+            valor_pagamento = pagamentos.iloc[0]
+
+            percentual_pagamento = (
+                valor_pagamento
+                / pagamentos.sum()
+                * 100
+            )
+
+            insights.append(
+                f"**Pagamento predominante:** "
+                f"{pagamento_lider} representa "
+                f"**{percentual_pagamento:.1f}%** "
+                f"do faturamento do período."
+            )
+
+        if not produtos_venda.empty:
+
+            produto_lider = ranking.index[0]
+
+            qtd_lider = ranking.iloc[0]
+
+            insights.append(
+                f"**Produto de maior saída:** "
+                f"{produto_lider}, com "
+                f"**{qtd_lider} unidades vendidas**."
+            )
+
+    if not estoque_baixo.empty:
+
+        insights.append(
+            f"**Atenção ao estoque:** "
+            f"{len(estoque_baixo)} produto(s) "
+            f"precisam ser acompanhados para evitar falta."
+        )
+
+    if insights:
+
+        for insight in insights:
+
+            st.markdown(
+                f"""
+                <div class="insight">
+                    {insight}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    else:
+
+        st.info(
+            "Ainda não existem dados suficientes "
+            "para gerar insights."
         )
 
 
@@ -467,13 +1101,11 @@ elif pagina == "Mesas / Pedidos":
     )
 
     st.markdown(
-        '<div class="subtitulo">Controle de pedidos em tempo real</div>',
+        '<div class="subtitulo">'
+        'Controle de pedidos em tempo real'
+        '</div>',
         unsafe_allow_html=True
     )
-
-    # -------------------------
-    # SELEÇÃO DA MESA
-    # -------------------------
 
     mesas = list(range(1, 11))
 
@@ -488,6 +1120,7 @@ elif pagina == "Mesas / Pedidos":
         with cols[i % 5]:
 
             if ocupada:
+
                 st.markdown(
                     f"""
                     <div class="mesa-ocupada">
@@ -503,6 +1136,7 @@ elif pagina == "Mesas / Pedidos":
                 )
 
             else:
+
                 st.markdown(
                     f"""
                     <div class="mesa-livre">
@@ -522,8 +1156,10 @@ elif pagina == "Mesas / Pedidos":
                 key=f"mesa_{mesa}",
                 use_container_width=True
             ):
+
                 st.session_state.mesa_atual = mesa
                 st.session_state.carrinho = []
+
                 st.rerun()
 
     st.divider()
@@ -565,6 +1201,7 @@ elif pagina == "Mesas / Pedidos":
             produtos = st.session_state.produtos.copy()
 
             if categoria != "Todas":
+
                 produtos = produtos[
                     produtos["Categoria"] == categoria
                 ]
@@ -576,16 +1213,21 @@ elif pagina == "Mesas / Pedidos":
                 )
 
                 with col1:
+
                     st.write(
                         f"**{produto['Produto']}**"
                     )
+
                     st.caption(
-                        f"{produto['Categoria']}"
+                        produto["Categoria"]
                     )
 
                 with col2:
+
                     st.write(
-                        dinheiro(produto["Preço"])
+                        dinheiro(
+                            produto["Preço"]
+                        )
                     )
 
                 with col3:
@@ -595,7 +1237,9 @@ elif pagina == "Mesas / Pedidos":
                         key=f"add_{produto['ID']}"
                     ):
 
-                        adicionar_produto(produto)
+                        adicionar_produto(
+                            produto
+                        )
 
                         st.rerun()
 
@@ -625,16 +1269,19 @@ elif pagina == "Mesas / Pedidos":
                     )
 
                     with col1:
+
                         st.write(
                             f"**{item['produto']}**"
                         )
 
                     with col2:
+
                         st.write(
                             f"{item['quantidade']}x"
                         )
 
                     with col3:
+
                         st.write(
                             dinheiro(subtotal)
                         )
@@ -643,7 +1290,9 @@ elif pagina == "Mesas / Pedidos":
                         "Remover",
                         key=f"remove_{i}"
                     ):
+
                         remover_produto(i)
+
                         st.rerun()
 
                 st.divider()
@@ -729,11 +1378,13 @@ elif pagina == "Produtos":
     )
 
     st.markdown(
-        '<div class="subtitulo">Cadastro e gerenciamento do cardápio</div>',
+        '<div class="subtitulo">'
+        'Cadastro e gerenciamento do cardápio'
+        '</div>',
         unsafe_allow_html=True
     )
 
-    st.data_editor(
+    produtos_editados = st.data_editor(
         st.session_state.produtos,
         use_container_width=True,
         hide_index=True,
@@ -755,9 +1406,12 @@ elif pagina == "Produtos":
         key="editor_produtos"
     )
 
+    st.session_state.produtos = produtos_editados
+
     st.info(
-        "Nesta demonstração os dados são mantidos apenas durante a sessão. "
-        "Na próxima etapa podemos salvar tudo automaticamente no Google Sheets."
+        "Nesta demonstração os dados são mantidos apenas "
+        "durante a sessão. Na próxima etapa podemos salvar "
+        "tudo automaticamente no Google Sheets."
     )
 
 
@@ -773,7 +1427,9 @@ elif pagina == "Estoque":
     )
 
     st.markdown(
-        '<div class="subtitulo">Acompanhamento dos produtos e alertas de reposição</div>',
+        '<div class="subtitulo">'
+        'Acompanhamento dos produtos e alertas de reposição'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -787,18 +1443,21 @@ elif pagina == "Estoque":
     c1, c2, c3 = st.columns(3)
 
     with c1:
+
         st.metric(
             "Produtos cadastrados",
             len(produtos)
         )
 
     with c2:
+
         st.metric(
             "Itens em estoque",
             int(produtos["Estoque"].sum())
         )
 
     with c3:
+
         st.metric(
             "Estoque baixo",
             len(baixo)
@@ -852,7 +1511,9 @@ elif pagina == "Clientes":
     )
 
     st.markdown(
-        '<div class="subtitulo">Relacionamento e frequência dos clientes</div>',
+        '<div class="subtitulo">'
+        'Relacionamento e frequência dos clientes'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -861,21 +1522,26 @@ elif pagina == "Clientes":
     c1, c2, c3 = st.columns(3)
 
     with c1:
+
         st.metric(
             "Clientes cadastrados",
             len(clientes)
         )
 
     with c2:
+
         st.metric(
             "Pedidos registrados",
             int(clientes["Pedidos"].sum())
         )
 
     with c3:
+
         st.metric(
             "Valor movimentado",
-            dinheiro(clientes["Total Gasto"].sum())
+            dinheiro(
+                clientes["Total Gasto"].sum()
+            )
         )
 
     st.divider()
@@ -906,6 +1572,7 @@ elif pagina == "Clientes":
     with st.form("novo_cliente"):
 
         nome = st.text_input("Nome")
+
         telefone = st.text_input("Telefone")
 
         salvar = st.form_submit_button(
@@ -957,30 +1624,36 @@ elif pagina == "Vendas":
     )
 
     st.markdown(
-        '<div class="subtitulo">Histórico das vendas realizadas</div>',
+        '<div class="subtitulo">'
+        'Histórico das vendas realizadas'
+        '</div>',
         unsafe_allow_html=True
     )
 
     vendas = st.session_state.vendas.copy()
 
     faturamento = vendas["Valor"].sum()
+
     quantidade = len(vendas)
 
     c1, c2, c3 = st.columns(3)
 
     with c1:
+
         st.metric(
             "Faturamento",
             dinheiro(faturamento)
         )
 
     with c2:
+
         st.metric(
             "Pedidos",
             quantidade
         )
 
     with c3:
+
         st.metric(
             "Ticket médio",
             dinheiro(
@@ -1009,8 +1682,25 @@ elif pagina == "Vendas":
             == filtro_pagamento
         ]
 
+    # Criamos uma cópia apenas para exibição
+    vendas_exibicao = vendas.copy()
+
+    vendas_exibicao["Itens"] = vendas_exibicao[
+        "Itens"
+    ].apply(
+        lambda itens:
+        ", ".join(
+            [
+                f"{item['produto']} ({item['quantidade']}x)"
+                for item in itens
+            ]
+        )
+        if isinstance(itens, list)
+        else ""
+    )
+
     st.dataframe(
-        vendas.sort_index(
+        vendas_exibicao.sort_index(
             ascending=False
         ),
         use_container_width=True,
@@ -1025,7 +1715,9 @@ elif pagina == "Vendas":
 
     st.divider()
 
-    st.subheader("Resumo por forma de pagamento")
+    st.subheader(
+        "Resumo por forma de pagamento"
+    )
 
     resumo = (
         vendas
@@ -1035,3 +1727,4 @@ elif pagina == "Vendas":
     )
 
     st.bar_chart(resumo)
+```
