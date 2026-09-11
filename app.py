@@ -188,7 +188,7 @@ st.markdown(
         gap: 5px;
         flex-wrap: nowrap;
 
-        background: #FAF7F5;
+        background: var(--orange);
         border: 1px solid #EEE7E3;
         border-radius: 14px;
 
