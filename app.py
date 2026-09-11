@@ -1296,21 +1296,7 @@ topbar_col1, topbar_col2 = st.columns(
 with topbar_col1:
 
     st.markdown(
-        """<div class="topbar-brand">
-    <div class="topbar-logo">
-        A
-    </div>
-
-    <div>
-        <div class="topbar-brand-name">
-            Aura
-        </div>
-
-        <div class="topbar-brand-subtitle">
-            Beauty Studio
-        </div>
-    </div>
-</div>""",
+        """<div class="topbar-brand"><div class="topbar-logo">A</div><div><div class="topbar-brand-name">Aura</div><div class="topbar-brand-subtitle">Beauty Studio</div></div></div>""",
         unsafe_allow_html=True
     )
 
@@ -1343,6 +1329,7 @@ pagina = (
     .replace("↗  ", "")
     .replace("♧  ", "")
 )
+
 
 # ============================================================
 # VISÃO GERAL
